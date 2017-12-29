@@ -1,0 +1,19 @@
+# Permanently ignored
+blog/
+Thumbs.db
+
+# Ignored for now
+nunitsoftware.com/
+history/
+izabel/
+journeys/
+topics/
+source/
+shoreline/
+
+Assert Interfaces.txt
+slides.html
+source.html
+resources.html
+robots.txt
+test.html
