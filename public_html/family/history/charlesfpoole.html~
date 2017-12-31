@@ -1,0 +1,36 @@
+<html>
+<!--  Created with the CoffeeCup HTML Editor  -->
+<!--        http://www.coffeecup.com/         -->
+<!--     Brewed on 4/21/2002 12:13:52 PM      -->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <meta http-equiv="Content-Language" content="en-us">
+  <link rel="shortcut icon" href="/cp/favicon.ico">
+  <title>Charles Francis Poole</title>
+  <style>
+    body, html { font: medium/1.5em Verdana, Arial, sans-serif;
+        margin: 0; padding: 0; }       
+    #header { text-align: center; }
+    #content { margin: 0 10%; }
+    div.pic { clear: both; margin: 0 0 2em 0; padding: 0;
+              float: left; width: 100%; }
+    div.left { text-align: left; }
+    div.right { text-align: left; }
+    div.left img { float: left; margin: 1em 1em 0 0; }
+    div.right img { float: right; margin: 0 0 0 1em; }
+    div.pic hr { margin: 0; padding: 0; }
+    p.sig { margin: 0 0 0 60%; }
+    p.rev { font-size: small; font-style: italic; }
+  </style>
+</head>
+<body>
+<div id="header">
+  <h1 >Charles Francis Poole</h1>
+</div>
+<div id="content">
+  
+	 
+</div>
+</body>
+</html>
+
