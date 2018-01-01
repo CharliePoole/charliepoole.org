@@ -131,13 +131,12 @@ body, html {
 }
 
 /* Page Layouts */
-.article {
+.article, .main-content {
   margin: 0 1em;
 }
 .single-column { 
   margin: 0 10%; 
 }
-
 /* Three columns - left fixed, middle and right responsive */
 .three-columns {
   margin: 0;
