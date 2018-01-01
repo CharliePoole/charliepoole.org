@@ -62,18 +62,24 @@ body, html {
     
   /* Page Header */
 #header { 
-    width: 100%; 
-    margin: 0; 
-    padding: 0;
-    text-align: left; 
+  font-family: "Century Gothic", Arial, Helvetica, sans-serif;
+  width: 100%;
+  margin: 0; 
+  padding: 0;
+  text-align: left; 
+  vertical-align: bottom;
 }
-#header td {
+#header > div {
+  height: 40px;
+}
+#header div {
   vertical-align: bottom;
   text-align: center;
+  display: table-cell;
 }
-td.logo {
-  font-family: "Century Gothic", Arial, Helvetica, sans-serif;
+#logo {
   font-size: 24px;
+  width: 240px;
   padding-top: 0;
   padding-left: 10px;
   padding-bottom: 5px;
@@ -83,11 +89,11 @@ td.logo {
   background-color: #E0E0E0;
   color: rgb(0,0,255); 
 }
-td.logo a:link, td.logo a:visited, td.logo a:active { 
+#logo a:link, #logo a:visited, #logo a:active { 
   text-decoration: none; 
   color: rgb(0,0,255); 
 }
-td.navselect {
+#nav .navselect {
   font-family: "Century Gothic", Arial, Helvetica, sans-serif;
   font-size: 16px; 
   font-weight: bold; 
@@ -97,9 +103,9 @@ td.navselect {
   border-top: 2px solid black;
   border-left: 2px solid black;
   border-right: 2px solid black;
-  vertical-align: bottom;
+  margin-top: 19px;
 }
-td.navlink { 
+#nav .navlink { 
   font-family: "Century Gothic", Arial, Helvetica, sans-serif;
   font-size: 16px; 
   font-weight: bold; 
@@ -111,17 +117,16 @@ td.navlink {
   border-top: 1px solid black;
   border-left: 1px solid black;
   border-right: 1px solid black;
-  vertical-align: bottom; 
+  margin-top: 19px;
 }
-td.navlink a:link, td.navlink a:visited, td.navlink a:active, 
-td.navselect a:link, td.navselect a:visited, td.navselect a:active { 
+#nav a:link, #nav a:visited, #nav a:active {
   text-decoration: none; 
   color: rgb(80,0,0) 
 }
-td.navlink a:hover, td.navselect a:hover { 
+#nav a:hover { 
   color: rgb(0,0,255); 
 }
-td.spacer {
+#header .spacer {
   border-bottom: 2px solid black;
 }
 
