@@ -129,8 +129,9 @@ body, html {
 #header .spacer {
   border-bottom: 2px solid black;
 }
-
-/* Page Layouts */
+#content {
+  margin: 0 10%;
+}
 .article, .main-content {
   margin: 0 1em;
 }
