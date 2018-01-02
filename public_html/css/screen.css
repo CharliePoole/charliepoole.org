@@ -1,5 +1,5 @@
 /* Default values of elements */
-body, html { 
+  body, html { 
     /*font: medium/1.5em Verdana, Arial, sans-serif;*/
     font-size: 10pt; 
     font-family: Arial, Helvetica, sans-serif; 
@@ -59,123 +59,144 @@ body, html {
     font-size: small; 
     font-style: italic; 
   }
-    
-  /* Page Header */
-#header { 
-  font-family: "Century Gothic", Arial, Helvetica, sans-serif;
-  width: 100%;
-  margin: 0; 
-  padding: 0;
-  text-align: left; 
-  vertical-align: bottom;
-}
-#header > div {
-  height: 40px;
-}
-#header div {
-  vertical-align: bottom;
-  text-align: center;
-  display: table-cell;
-}
-#logo {
-  font-size: 24px;
-  width: 240px;
-  padding-top: 0;
-  padding-left: 10px;
-  padding-bottom: 5px;
-  padding-right: 10px;
-  border-right: 2px solid black;
-  border-bottom: 2px solid black;
-  background-color: #E0E0E0;
-  color: rgb(0,0,255); 
-}
-#logo a:link, #logo a:visited, #logo a:active { 
-  text-decoration: none; 
-  color: rgb(0,0,255); 
-}
-#nav .navselect {
-  font-family: "Century Gothic", Arial, Helvetica, sans-serif;
-  font-size: 16px; 
-  font-weight: bold; 
-  color: rgb(80, 0, 0);
-  padding-left: 5px;
-  padding-right: 5px; 
-  border-top: 2px solid black;
-  border-left: 2px solid black;
-  border-right: 2px solid black;
-  margin-top: 19px;
-}
-#nav .navlink { 
-  font-family: "Century Gothic", Arial, Helvetica, sans-serif;
-  font-size: 16px; 
-  font-weight: bold; 
-  color: rgb(80,0,0); 
-  background-color: #E0E0E0;
-  padding-left: 5px;
-  padding-right: 5px; 
-  border-bottom: 2px solid black;
-  border-top: 1px solid black;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
-  margin-top: 19px;
-}
-#nav a:link, #nav a:visited, #nav a:active {
-  text-decoration: none; 
-  color: rgb(80,0,0) 
-}
-#nav a:hover { 
-  color: rgb(0,0,255); 
-}
-#header .spacer {
-  border-bottom: 2px solid black;
-}
-#content {
-  margin: 0 10%;
-}
-.article, .main-content {
-  margin: 0 1em;
-}
-.single-column { 
-  margin: 0 10%; 
-}
-/* Three columns - left fixed, middle and right responsive */
-.three-columns {
-  margin: 0;
-  padding: 0;
-}
-.left-column {
-  float: left;
-  width: 133px;
-}
-.middle-and-right {
-  margin-left: 133px;
-}
-.middle-column {
-  padding-left: 2%;
-  padding-right: 2%;
-}
 
-@media screen and (max-width: 600px) {
-  .left-column {
-    margin-top: -13px;
+/* Page Header */
+  #header { 
+    font-family: "Century Gothic", Arial, Helvetica, sans-serif;
+    width: 100%;
+    margin: 0; 
+    padding: 0;
+    text-align: left; 
+    vertical-align: bottom;
   }
-  .right-column {
-    width: 96%;
-    margin-left: 2%;
-    margin-right: 2%;
+  #header > div {
+    height: 40px;
   }
-}
+  #header div {
+    vertical-align: bottom;
+    text-align: center;
+    display: table-cell;
+  }
+  #header .spacer {
+    border-bottom: 2px solid black;
+  }
 
-@media screen and (min-width: 601px) {
-  .middle-column {
-    float: left;
-    width: 66%;
+  /* Logo */
+    #logo {
+      font-size: 24px;
+      width: 240px;
+      padding-top: 0;
+      padding-left: 10px;
+      padding-bottom: 5px;
+      padding-right: 10px;
+      border-right: 2px solid black;
+      border-bottom: 2px solid black;
+      background-color: #E0E0E0;
+      color: rgb(0,0,255); 
+    }
+    #logo a:link, #logo a:visited, #logo a:active { 
+      text-decoration: none; 
+      color: rgb(0,0,255); 
+    }
+
+  /* Main Navigation */
+    #nav .navselect {
+      font-family: "Century Gothic", Arial, Helvetica, sans-serif;
+      font-size: 16px; 
+      font-weight: bold; 
+      color: rgb(80, 0, 0);
+      padding-left: 5px;
+      padding-right: 5px; 
+      border-top: 2px solid black;
+      border-left: 2px solid black;
+      border-right: 2px solid black;
+      margin-top: 19px;
+    }
+    #nav .navlink { 
+      font-family: "Century Gothic", Arial, Helvetica, sans-serif;
+      font-size: 16px; 
+      font-weight: bold; 
+      color: rgb(80,0,0); 
+      background-color: #E0E0E0;
+      padding-left: 5px;
+      padding-right: 5px; 
+      border-bottom: 2px solid black;
+      border-top: 1px solid black;
+      border-left: 1px solid black;
+      border-right: 1px solid black;
+      margin-top: 19px;
+    }
+    #nav a:link, #nav a:visited, #nav a:active {
+      text-decoration: none; 
+      color: rgb(80,0,0) 
+    }
+    #nav a:hover { 
+      color: rgb(0,0,255); 
+    }
+
+/* Page Footer */
+  .footer { 
+    font-size: 8pt; 
+    font-family: Verdana, Arial, Helvetica, Geneva, Sans-serif; 
+    font-style: italic; 
+    width: 100%;
+    margin: 0;
+    border-top: 2px solid black;
+    text-align: center; 
+    color: rgb(153, 0, 0); 
+    clear: both;
   }
-  .right-column {
-    float: left;
-    width: 30%;
+
+/* Page Content */
+  #content {
+    margin: 0 10%;
   }
-}
+
+  .article, .main-content {
+    margin: 0 1em;
+  }
+  .single-column { 
+    margin: 0 10%; 
+  }
+
+  /* Three column layout - left fixed, middle and right responsive */
+    .three-columns {
+      margin: 0;
+      padding: 0;
+    }
+    .left-column {
+      float: left;
+      width: 133px;
+    }
+    .middle-and-right {
+      margin-left: 133px;
+    }
+    .middle-column {
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+    @media screen and (max-width: 600px) {
+      .left-column {
+        margin-top: -13px;
+      }
+      .right-column {
+        width: 96%;
+        margin-left: 2%;
+        margin-right: 2%;
+      }
+    }
+
+    @media screen and (min-width: 601px) {
+      .middle-column {
+        float: left;
+        width: 66%;
+      }
+      .right-column {
+        float: left;
+        width: 30%;
+      }
+    }
 
 /* Style-based content layout */
 div.title {
@@ -326,19 +347,6 @@ p.haiku {
   font-style: italic; 
   font-weight: bold; 
   font-size: large;
-}
-
-/* Footer text */
-.footer { 
-  font-size: 8pt; 
-  font-family: Verdana, Arial, Helvetica, Geneva, Sans-serif; 
-  font-style: italic; 
-  width: 100%;
-  margin: 0;
-  border-top: 2px solid black;
-  text-align: center; 
-  color: rgb(153, 0, 0); 
-  clear: both;
 }
 
 div.pic { 
