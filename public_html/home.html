@@ -5,8 +5,8 @@
 <title>Charlie Poole - Home</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <meta http-equiv="Content-Language" content="en-US">
-<!--<meta name="viewport" content="width=device-width, initial-scale=1"/>-->
-<link rel="stylesheet" type="text/css" href="/css/cp.css">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
 <link rel="shortcut icon" href="favicon.ico">
 </head>
 <!-- End Standard Head Part -->
@@ -14,28 +14,25 @@
 <body>
 
 <!-- Standard CharliePoole.org header -->
-<table class="header" cellpadding="0" cellspacing="0" margin="0"><tr>
- <td class="logo" width=240><a href="/"><big>C</big>harlie<big>P</big>oole.org</a></td>
- <td width=5% class="spacer">&nbsp;</td>
- <td>
-  <table class="navtable" cellpadding="0" cellspacing="0" margin="0"><tr>
-   <td class="navselect">Home</td>
-   <td class="navlink"><a href="blog/">Blog</a></td>
-   <td class="navlink"><a href="articles.html">Articles</a></td>
-   <td class="navlink"><a href="events.html">Events</a></td>
-   <td class="navlink"><a href="contact.html">Contact</a></td>
-  </tr></table>
- </td>
- <td width=50% class="spacer">&nbsp;</td>
-</tr></table>
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole.org</a></div>
+    <div class="spacer" style="width: 5%">&nbsp;</div>
+    <div id="nav">
+        <div class="navlink">Home</div>
+        <div class="navlink"><a href="blog/">Blog</a></div>
+        <div class="navlink"><a href="articles.html">Articles</a></div>
+        <div class="navlink"><a href="events.html">Events</a></div>
+        <div class="navlink"><a href="contact.html">Contact</a></div>
+    </div>
+    <div class="spacer" style="width: 100%">&nbsp;</div>
+</div>
 <!-- End of Header -->
 
 
-<!-- Content Table -->
-<table class="content"><tr>
+<div class="three-columns">
 
 <!-- Left Side Content -->
-<td class="left-content">
+<div class="left-column">
 
 <img src="images/Charlie.gif">
 
@@ -67,24 +64,24 @@
 <tr><td class=lev1><a href="http://nunitsoftware.com/blogs">My Blog "It's the Tests"</a></td></tr>
 </table>
 -->
-</td>
-<!-- End Left Side Content -->
+</div>
+<!-- End Left Column -->
 
+<div class="middle-and-right">
 
-<!-- Main Content from /home/charl422/public_html/pages/home.html -->
-<td class="main-content">
+<div class="middle-column">
 
 <h2>Welcome</h2>
 
 <p>I'm putting this site back online after a hiatus. It was not updated for many years
    and has been offline for a while due to server issues. What's here is rather
-   out of date, but I'll be working to update it in the coming months.
+   out of date, but I'll be working to update it in the coming months.</p>
 
 <p>I'm an independent software developer, trainer and coach working
    primarily in the Northwest. I've been developing software for over
    40 years and <b>I'm still not bored!</b> If you like, you can read
    my <a href="bio.html">informal bio</a> or take a look at my 
-   <a href="resume.html">resume</a>. 
+   <a href="resume.html">resume</a>.</p>
 
 <h2>What's Here?</h2>
    
@@ -119,7 +116,6 @@
 
 <h2>Other Sites</h2>
 
-<table cellpadding="10">
 <!--<tr>
 <td>
    <a href="http://pooleconsulting.com"><img src="images/PCLogo_105_75.gif"></a>
@@ -134,41 +130,32 @@
 </td>
 </tr>
 <tr><td>&nbsp;</td><td><hr></td></tr>-->
-<tr>
-<td align="center">
-    <a href="http://nunitsoftware.com"><img src="images/old_nunit_logo.gif" width="80"></a>
-</td>
-<td valign="middle">
+<p>
+    <a href="http://nunitsoftware.com"><img src="images/old_nunit_logo.gif" width="80" class="floatleft"></a>
+
     <a href="http://nunitsoftware.com">NUnit Software</a> is my company. We provide
     training and mentoring to teams as well as producing open source and commercial software
     related to NUnit and other types of testing.
-</td>
-</tr>
-<tr>
-<td>
+</p>
 
-</td>
-<td>
+<p>
     <a href="http://braniitaliani.wordpress.com">Brani Italiani</a> is my Italian-language blog,
     which I set up to help with my study of the language. I'm always happy when native speakers
     show up and give me comments or advice.
-</td>
-</tr>
-<tr>
-<td align="center">
-   <a href="http://nunit.org"><img src="images/nunit_128.png" width="64"></a>
-</td>
-<td valign="middle">
+</p>
+
+<p>
+    <a href="http://nunit.org"><img src="images/nunit_128.png" width="64" class="floatleft"></a>
+
     <a href="http://nunit.org">NUnit.org</a> is the official site of the NUnit
     unit-testing framework for all .Net languages. I continue to participate in 
     the NUnit Project, which is now led by a Core Team of developers. 
+</p>
 
    <!--<p>The <a href="http://nunit.com">NUnit.com site<a>, currently under development,
    will provide blogs, articles, additional software and other NUnit resources. It
    is also the home of the <a href="http://nunit.com/devwiki.cgi">NUnit Developers Wiki</a>,
    used for discussion and planning purposes by the NUnit developers.</p>-->
-</td>
-</tr>
 <!--
 <tr><td>&nbsp;</td><td><hr></td></tr>
 <tr>
@@ -192,13 +179,12 @@
 </tr>
 -->
 
-</table>
-</td>
-<!-- End Main Content -->
+</div>
+<!-- End Middle Column -->
 
 
 <!-- Right Side Content -->
-<td class="right-content">
+<div class="right-column">
 
 <div class="news">
     <p class="headline">Coming Events</p>
@@ -276,18 +262,20 @@
    assertions to those built into NUNit.</p>
    </div>
 -->
-</td>
-<!-- End Right Side Content -->
+</div>
+<!-- End Right Column -->
 
-</tr></table>
-<!-- End Content Table -->
+</div>
+<!-- End Right and Middle Columns -->
 
+</div>
+<!-- End Three Column Content -->
 
 <!-- Standard CharliePoole.org footer -->
-<table class="footer"><tr><td><small>
+<div class="footer">
 Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
 <big>c</big>harlie<big>p</big>oole at gmail dot com
-</small></td></tr></table>
+</div>
 
 </body>
 </html>

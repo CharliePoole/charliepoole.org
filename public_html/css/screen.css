@@ -252,13 +252,13 @@ div.rightbar {
 
 /* Images */
 img.floatleft { 
-  float: left; 
-  margin-right: 1em; 
-  margin-bottom: 1em; 
+  float: left;
+  margin-right: 1em;
   border:0 
 }
 img.floatright { 
   float: right; 
+  margin-left: 1em;
   border:0 
 }
 
