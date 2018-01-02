@@ -338,6 +338,7 @@ p.haiku {
   border-top: 2px solid black;
   text-align: center; 
   color: rgb(153, 0, 0); 
+  clear: both;
 }
 
 div.pic { 
