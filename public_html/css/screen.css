@@ -60,26 +60,26 @@
     font-style: italic; 
   }
 
-/* Page Header */
-  #header { 
-    font-family: "Century Gothic", Arial, Helvetica, sans-serif;
-    width: 100%;
-    margin: 0; 
-    padding: 0;
-    text-align: left; 
-    vertical-align: bottom;
-  }
-  #header > div {
-    height: 40px;
-  }
-  #header div {
-    vertical-align: bottom;
-    text-align: center;
-    display: table-cell;
-  }
-  #header .spacer {
-    border-bottom: 2px solid black;
-  }
+  /* Page Header */
+    #header { 
+      font-family: "Century Gothic", Arial, Helvetica, sans-serif;
+      width: 100%;
+      margin: 0; 
+      padding: 0;
+      text-align: left; 
+      vertical-align: bottom;
+    }
+    #header > div {
+      height: 40px;
+    }
+    #header div {
+      vertical-align: bottom;
+      text-align: center;
+      display: table-cell;
+    }
+    #header .spacer {
+      border-bottom: 2px solid black;
+    }
 
   /* Logo */
     #logo {
@@ -135,7 +135,7 @@
     }
 
 /* Page Footer */
-  .footer { 
+  #footer { 
     font-size: 8pt; 
     font-family: Verdana, Arial, Helvetica, Geneva, Sans-serif; 
     font-style: italic; 
@@ -147,56 +147,55 @@
     clear: both;
   }
 
-/* Page Content */
+/* Page Layout */
+  /* Single column layout with 2% margins for mobile.
+     Adjusted upward for larger screens. */
   #content {
-    margin: 0 10%;
+    margin: 0 2%;
+    padding: 0;
   }
-
-  .article, .main-content {
-    margin: 0 1em;
-  }
-  .single-column { 
-    margin: 0 10%; 
-  }
-
+  
   /* Three column layout - left fixed, middle and right responsive */
-    .three-columns {
-      margin: 0;
-      padding: 0;
+  #three-columns {
+    margin: 0;
+    padding: 0;
+  }
+  .left-column {
+    float: left;
+    /* TODO: Figure out why this is needed and eliminate */
+    margin-top: -14px;
+    width: 133px;
+  }
+  .middle-and-right {
+    margin-left: 133px;
+  }
+  .middle-column {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+
+  .right-column {
+    width: 96%;
+    margin: 0 2%;
+  }
+  
+  @media screen and (min-width: 601px) {
+    #content {
+      margin: 0 10%;
     }
     .left-column {
-      float: left;
-      width: 133px;
-    }
-    .middle-and-right {
-      margin-left: 133px;
+      margin-top: 0;
     }
     .middle-column {
-      padding-left: 2%;
-      padding-right: 2%;
+      float: left;
+      width: 66%;
     }
-
-    @media screen and (max-width: 600px) {
-      .left-column {
-        margin-top: -13px;
-      }
-      .right-column {
-        width: 96%;
-        margin-left: 2%;
-        margin-right: 2%;
-      }
+    .right-column {
+      float: left;
+      width: 30%;
+      margin: 0;
     }
-
-    @media screen and (min-width: 601px) {
-      .middle-column {
-        float: left;
-        width: 66%;
-      }
-      .right-column {
-        float: left;
-        width: 30%;
-      }
-    }
+  }
 
 /* Style-based content layout */
 div.title {
@@ -350,33 +349,33 @@ p.haiku {
 }
 
 div.pic { 
-    margin: 0 0 2em 0;
+    /*margin: 0 auto 2em auto;*/
     padding: 0;
     float: left;
     width: 100%; 
 }
 div.pic hr {
-    margin: 0;
-    padding: 0;
+  display: none;
 }
 div.pic img
 {
   max-width: 100%;
   max-height: 100%;
+  display: block;
+  margin: 0 auto 2em;
 }
-@media screen and (max-width: 600px) {
-  div.pic hr {
-      display: none;
-  }
-}
+
 @media screen and (min-width: 601px) {
+  div.pic hr {
+    display: block;
+  }
   div.odd img {
       float: left;
-      margin: 0 1em 0 0;
+      margin: 0 1em 2em 0;
   }
   div.even img {
       float: right;
-      margin: 0 0 0 1em;
+      margin: 0 0 2em 1em;
   }
 }
 
