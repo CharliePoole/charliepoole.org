@@ -69,23 +69,12 @@
       text-align: left; 
       vertical-align: bottom;
       border-bottom: 2px solid black
-    };
-    #header > div {
-      height: 40px;
-    }
-    #header div {
-      vertical-align: bottom;
-      text-align: center;
-      display: table-cell;
-    }
-    #header .spacer {
-      /*border-bottom: 2px solid black;*/
     }
 
   /* Logo */
     #logo {
       font-size: 24px;
-      width: 240px;
+      width: 180px;
       padding-top: 0;
       padding-left: 10px;
       padding-bottom: 5px;
@@ -101,7 +90,14 @@
     }
 
   /* Main Navigation */
-    #topnav {
+  #menu-button {
+    position: absolute;
+    right: 0px;
+    top: 4px;
+    cursor: pointer;
+    cursor: hand;
+  }
+  #topnav {
       margin: 0;
       padding: 0;
     }
@@ -111,10 +107,10 @@
       font-weight: bold; 
       color: rgb(80,0,0); 
       background-color: #E0E0E0;
-      /*padding: 0 .5em;*/
       border-color: black;
       border-style: solid;
       list-style: none;
+      text-align: center;
     }
     #topnav a {
       display: block;
@@ -122,9 +118,6 @@
       text-decoration: none;
       color: rgb(80,0,0);
     }
-    /*#topnav a:link, #topnav a:visited, #topnav a:active {
-      color: rgb(80,0,0) 
-    }*/
     #topnav a:hover { 
       color: rgb(0,0,255); 
     }
@@ -152,7 +145,7 @@
     @media screen and (min-width: 601px) {
       #topnav {
         position: absolute;
-        left: 310px;
+        left: 220px;
         top: 18px;
         display: block;
       }
@@ -163,6 +156,7 @@
       }
       #topnav li.active {
         background-color: white;
+        padding: 0 .5em;
         border-width: 2px;
         border-bottom-color: white;
         position: relative;
@@ -171,48 +165,6 @@
       #menu-button img {
         display: none;
       }
-    }
-    #menu-button {
-      position: absolute;
-      right: 0px;
-      top: 4px;
-      cursor: pointer;
-      cursor: hand;
-    }
-    #nav .navselect {
-      font-family: "Century Gothic", Arial, Helvetica, sans-serif;
-      font-size: 16px; 
-      font-weight: bold; 
-      color: rgb(80, 0, 0);
-      padding-left: 5px;
-      padding-right: 5px; 
-      border-top: 2px solid black;
-      border-left: 2px solid black;
-      border-right: 2px solid black;
-      border-bottom: 4px solid white;
-      margin-top: 19px;
-      position: relative;
-      top: 2px;
-    }
-    #nav .navlink { 
-      font-family: "Century Gothic", Arial, Helvetica, sans-serif;
-      font-size: 16px; 
-      font-weight: bold; 
-      color: rgb(80,0,0); 
-      background-color: #E0E0E0;
-      padding-left: 5px;
-      padding-right: 5px; 
-      border-top: 1px solid black;
-      border-left: 1px solid black;
-      border-right: 1px solid black;
-      margin-top: 19px;
-    }
-    #nav a:link, #nav a:visited, #nav a:active {
-      text-decoration: none; 
-      color: rgb(80,0,0) 
-    }
-    #nav a:hover { 
-      color: rgb(0,0,255); 
     }
 
 /* Page Footer */
