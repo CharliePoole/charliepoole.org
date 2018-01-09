@@ -4,15 +4,9 @@ Thumbs.db
 
 # Ignored for now
 nunitsoftware.com/
-izabel/
 journeys/
-topics/
-source/
 shoreline/
+test/
 
 Assert Interfaces.txt
-slides.html
-source.html
-resources.html
 robots.txt
-test.html
