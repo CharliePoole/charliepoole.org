@@ -194,27 +194,38 @@
     margin: 0 2%;
     padding: 0;
   }
+
+  /* Two column layout */
+  #two-columns {
+    margin: 0;
+    padding: 0;
+  }
+  #two-columns .column {
+    float: left;
+    width: 46%;
+    margin: 2%;
+  }
   
   /* Three column layout - left fixed, middle and right responsive */
   #three-columns {
     margin: 0;
     padding: 0;
   }
-  .left-column {
+  #three-columns .fixed-left-column {
     float: left;
     /* TODO: Figure out why this is needed and eliminate */
     margin-top: -14px;
     width: 133px;
   }
-  .middle-and-right {
+  #three-columns .middle-and-right {
     margin-left: 133px;
   }
-  .middle-column {
+  #three-columns .middle-column {
     padding-left: 2%;
     padding-right: 2%;
   }
 
-  .right-column {
+  #three-columns .right-column {
     width: 96%;
     margin: 0 2%;
   }
@@ -223,14 +234,18 @@
     #content {
       margin: 0 10%;
     }
-    .left-column {
-      margin-top: 0;
+    #three-columns .fixed-left-column {
+      margin-top: 0; 
+      width: 200px;
     }
-    .middle-column {
+    #three-columns .middle-and-right {
+      margin-left: 200px;
+    }
+    #three-columns .middle-column {
       float: left;
       width: 66%;
     }
-    .right-column {
+    #three-columns .right-column {
       float: left;
       width: 30%;
       margin: 0;

@@ -13,29 +13,42 @@
 
 <body>
 
+<style>
+    div.floatleft, div.floatright {
+        width: 30%;
+        min-width: 133px;
+        max-width: 200px;
+    }
+    img {
+        width: 100%
+    }
+</style>
+
 <!-- Non-Default Header -->
 <div id="logo" style="width: 100%; text-align: center"><big>C</big>harlie<big>P</big>oole</div>
 <!-- End of Header -->
 
-<table style="width: 100%; margin-top: 2em"><tr>
-<td style="padding-right: 2em">
+<div id="two-columns">
+
+<div class="column">
     <div class="floatright">
         <a href="home.html">
-        <img src="images/Charlie.gif">
-        <h3 style="text-align: center">My Professional<br>Website</h3>
-        </a>
+            <img src="images/Charlie.gif">
+            <h3 style="text-align: center">My Professional<br>Website</h3>
+            </a>
     </div>
-</td>
-<td style="padding-left: 2em">
+</div>
+<div class="column">
     <div class="floatleft">
         <a href="/personal/">
-        <img src="images/Charlie2.gif">
-        <h3 style="text-align: center">My Personal<br>Website</h3>
-        </a>
+            <img src="images/Charlie2.gif">
+            <h3 style="text-align: center">My Personal<br>Website</h3>
+            </a>
     </div>
-</td>
-</tr></table>
-    
+</div>
+
+</div>
+
 <!-- Standard CharliePoole.org footer -->
 <div id="footer">
 Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
