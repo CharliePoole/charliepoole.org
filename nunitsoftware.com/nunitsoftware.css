@@ -1,0 +1,146 @@
+/* HTML Elements */
+html, body {
+    margin: 0;  
+    padding: 0; 
+}
+body {
+    font: 90% "Verdana", "Arial", "Helvetica", sans-serif; 
+}
+img {
+    border: none; 
+    padding: 0; 
+    margin: 0;
+}
+table { 
+    font: 1em "Verdana", "Arial", "Helvetica", sans-serif; 
+}
+h1 { 
+    font-size: 1.8em; 
+    font-weight: bold; 
+}
+h2 { 
+    font-size: 1.5em; 
+    font-weight: bold; 
+}
+h3 { 
+    font-size: 1.2em; 
+    font-weight: bold;
+    clear: left;
+}
+h4 { 
+    font-size: 1em; 
+    font-weight: bold; 
+    margin: 0; 
+    padding: 0; 
+}
+
+/* Masthead and Main Menu */
+#header { 
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    background: #8080a7;
+}
+#header #logo { 
+    margin: 0; 
+    padding: 0; 
+    position: absolute; 
+    top: 15px; 
+    left: 15px;
+}
+#header #nav { 
+    min-width: 670px; 
+    margin: 25px 0 10px 200px; 
+    padding: 15px 0 15px 5px;
+    white-space: nowrap; 
+}
+/* Hide from IE-mac \*/
+* html #nav { 
+    height: 1%; 
+}
+/* End of IE-mac hack */
+
+#nav a {
+    text-decoration: none; 
+    color: #000; 
+    font: 1em "Times New Roman", Roman, serif; 
+    background: #bbb;
+    text-transform: uppercase; 
+    margin: 0 5px; 
+    padding: 5px 10px; 
+    border: 1px solid black; 
+}
+#nav a.active { 
+    background: #fff; 
+} 
+#nav a:hover { 
+    background: #ddd; 
+}
+
+/* Single column layout with 2% margins for mobile.
+     Adjusted upward for larger screens. */
+#single-column-layout {
+    margin: 0 2%;
+    padding: 0;
+}
+#two-column-layout {
+    margin: 0;
+    padding: 0;
+}
+#two-column-layout .left-column {
+    margin: 0 2%;
+    padding: 0;
+}
+#two-column-layout .right-column {
+    margin: 1em 2% 0 2%;
+    padding: 0;
+}
+
+/* Adjust layout for larger screens */
+@media screen and (min-width: 601px) {
+    #single-column-layout {
+        margin: 0 10%;
+    }
+    #two-column-layout .left-column {
+        float: left;
+        width: 70%;
+    }
+    #two-column-layout .right-column {
+        float: left;
+        border-left: 1px solid black;
+        width: 20%;
+        padding-left: 1%;
+        font-size: .8em; background-color: #fff;
+    }
+}
+
+/* Page Footer */
+#footer { 
+    text-align: center; 
+    font-size: .8em; 
+    color: #444; 
+    clear: both;
+    border-top: 2px solid #999;
+    width: 100%; 
+    margin: 1em 0 0 0; 
+    padding: 5px 0 0 0; 
+}      
+
+/* Right column news */
+#news { 
+    position: absolute; 
+    top: 100px; 
+    left: 76%; 
+    border-left: 1px solid black;
+    width: 14%; 
+    margin: 1em 0 0; 
+    padding: 0 5%; 
+    font-size: .8em;
+    background-color: #fff;
+}
+#news h4 { 
+    font: 1.2em "Times New Roman", Roman, serif; 
+    font-variant: small-caps; 
+    text-align: center; 
+    margin: 0 0 1em; 
+}
