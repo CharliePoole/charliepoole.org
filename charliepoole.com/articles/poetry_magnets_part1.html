@@ -1,0 +1,425 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<!-- Standard Head Part -->
+<head>
+<title>Charlie Poole - Poetry&nbsp;Magnets&nbsp;Part1</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script src="/js/common.js"></script>
+</head>
+<!-- End Standard Head Part -->
+
+<body>
+
+<!-- Standard header -->
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole</a></div>
+    <ul id="topnav">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/articles.html">Articles</a></li>
+        <li><a href="/events.html">Events</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <div id="menu-button" onclick="toggleMenuDisplay()">
+        <img src="/images/menu-button.png"/>
+    </div>
+</div>
+<!-- End of Header -->
+    
+<!-- Content -->
+<div id="content"><tr>
+
+<!-- Title Block -->
+<h1>Poetry Magnets: First Verse<br>
+<span class="author">Charlie Poole</span><br>
+<span class="date">November, 2005</span></h1>
+
+
+
+
+
+<p>In a recent thread on the TestFirstDevelopment list, Bill Wake asked for some help 
+   defining an algorithm for reading cards, which are laid out on a table. Even though the cards
+   are not perfectly lined up, the human eye and mind can perceive alignments. After
+   a bit of discussion, Bill offered a metaphor to help us understand the problem...</p>
+
+<blockquote class="quote">
+   Think of this as a simulation of magnetic poetry on a refrigerator. (If you haven't 
+   seen it, there are a bunch of magnets with words on them, and people arrange them 
+   into messages.) The user drags these rectangles into an arrangement. 
+   Since we aren't too precise, the arrangement looks a little like a ransom note 
+   - you know, where someone has glued phrases from a newspaper. They aren't in a 
+   perfect line, but the human reader has no trouble.
+</blockquote>
+
+<p>That got me thinking. Even if it's only a metaphor for the real problem, it's a pretty
+   interesting one, and sounds like fun. Let's see I can solve it using a test-driven 
+   approach, rather than discussing various algorithms in advance...</p>
+
+<div class="section">
+
+<a name="ref1"><h2>A Quick Design Session</h2></a>
+
+
+<p>Right at the start, we should make sure we understand the problem we've decided to solve.
+   Here's a rewording of the problem, with some additonal specifications
+   the "Customer" - that's me - has provided...</p>
+
+<ul>
+   <li>Magnets with words on them are placed on a surface. The 
+       magnets are rectangular in shape and are all the same height. Their length 
+       varies depending on their content. They may be placed in any location and
+	   oriented horizontally, vertically or at some other angle. Due to physical
+	   limitations, they may not overlap.</li>
+   <li>The program should take a list of magnets, with the location, orientation 
+       and content of each one, and produce a text string that concatenates them 
+       in the order a human would read them. The text should be broken into lines
+       if the layout "looks like" a set of lines.</li>
+</ul>
+
+<p>My approach will be to do the simplest thing first. In particular, I plan to
+   define some additional constraints at the start and remove them as I go along. 
+   So initially, I'll limit my tests as follows...</p>
+
+<ul>
+   <li>Magnets are always perfectly horizontal. This allows great simplification
+       initially. I wonder if it might be a problem later... well, we'll find
+	   out as we go along.</li>
+   <li>Magnets on the same line are always perfectly aligned. As a result, 
+       magnets with different Y coordinates will always be in different lines.
+       I expect this to give us erroneous results eventually, but we'll deal with that
+	   when it happens.</li>
+</ul>
+
+<p>I can forsee needing two objects. A <b>MagneticSurface</b> on which the magnets
+   are placed and the <b>Magnets</b> themselves. I don't think it would necessarily
+   be a <b>BadThing</b> to create both of them right away, but - just for fun - let's 
+   start out with only the surface.</p>
+
+<p>That's the end of our design session. It really was quick, wasn't it?</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref2"><h2>First Test</h2></a>
+
+
+<p>When I was younger and less experienced, I thought that speed of programming
+   was simply a matter of style. Some people are faster, others slower. Some take
+   very small steps, others larger. These days, I've come to understand that speed
+   of programming and size of steps are a matter of technique. Depending on the
+   problem at hand, my confidence in understanding both it and the technology
+   and too many other factors to list, I may need to <b>choose</b> a different
+   speed at which to work and a different step size for my tests.</p>
+   
+ <p>In this case, I'm going to program in fairly small steps at first. I could 
+   easily go faster, and when I do the problem again I may. But it's good to warm 
+   up before exercise and I'd like this article to be understandable to readers 
+   who are new to TDD as well as to the veterans. For those who find the pace
+   too slow, meet me in the next installment, where we'll speed things up a bit.</p>
+
+<p>It's often useful to start with the do-nothing test case and that's what I've done here...</p>
+
+<pre class="code">
+<b>[TestFixture]
+public class MagnetTests
+{
+    [Test]
+    public void NoMagnets()
+    {
+        MagneticSurface magnets = new MagneticSurface();
+        Assert.AreEqual( "", magnets.Text );
+    }
+}</b>
+</pre>
+
+<p>To make this compile, I need to create the <b>MagneticSurface</b> class...</p>
+
+<pre class="code">
+<b>public class MagneticSurface
+{
+    public string Text
+    {
+        return null;
+    }
+}
+</b>
+</pre>
+
+<p>I had to have a <b>Text</b> property to satisfy the compiler. I deliberately
+   made it return a value - <b>null</b> - such that the test would fail. Here's
+   the error message...</p>
+
+<pre class="code">
+expected: &lt;""&gt;
+ but was: &lt;null&gt;
+</pre>
+
+<p>This is easy enough to fix...</p>
+
+<pre class="code">
+public class MagneticSurface
+{
+    public string Text
+    {
+        <b>return "";</b>
+    }
+}
+</pre>
+
+<p>The first test passes now. I could have made it pass right away, but it's
+   reassuring to see the failure - the red bar - followed by passing - the
+   green bar.</p>
+
+</div>
+    
+<div class="section">
+
+<a name="ref3"><h2>Getting the Word Out</h2></a>
+
+
+<p>Having handled the case with no magnets on the surface, the next logical
+   step is to put one there. So let's do that...</p>
+
+<pre class="code">
+[TestFixture]
+public class MagnetTests
+{
+    [Test]
+    public void NoMagnets()
+    {
+        MagneticSurface magnets = new MagneticSurface();
+        Assert.AreEqual( "", magnets.Text );
+    }
+
+    <b>[Test]
+    public void OneMagnet()
+    {
+        MagneticSurface magnets = new MagneticSurface();
+        magnets.Add( "Hello" );
+        Assert.AreEqual( "Hello", magnets.Text );
+    }</b>
+}
+</pre>
+
+<p>To make this compile, we have to modify our production class...</p>
+
+<pre class="code">
+public class MagneticSurface
+{
+    public string Text
+    {
+        return "";
+    }
+
+    <b>public void Add( string magnet )
+    {
+    }</b>
+}
+</pre>
+
+<p>Of course, the test fails, since we still are returning the empty string. Failure
+   is just what we are looking for here. Now we can fix the code and see the bar turn green...</p>
+
+
+<pre class="code">
+public class MagneticSurface
+{
+    <b>private string text = "";</b>
+
+    public string Text
+    {
+        <b>return text;</b>
+    }
+
+    public void Add( string magnet )
+    {
+        <b>this.text = magnet;</b>
+    }
+}
+</pre>
+
+<p>The tests are passing, but we see some duplication: both tests
+   create a new <b>MagneticSurface</b> object. We can use a <b>SetUp</b>
+   method to remove the duplication, while still getting a fresh
+   object to work with in each test. Let's do that before moving on...</p>
+
+<pre class="code">
+[TestFixture]
+public class MagnetTests
+{
+    <b>private MagneticSurface magnets;
+
+    [SetUp]
+    public void BeforeEachTest()
+    {
+        magnets = new MagneticSurface();
+    }</b>
+ 
+    [Test]
+    public void NoMagnets()
+    {
+        <span class="strike">MagneticSurface magnets = new MagneticSurface();</span>
+        Assert.AreEqual( "", magnets.Text );
+    }
+
+    [Test]
+    public void OneMagnet()
+    {
+        <span class="strike">MagneticSurface magnets = new MagneticSurface();</span>
+        magnets.Add( "Hello" );
+        Assert.AreEqual( "Hello", magnets.Text );
+    }
+}
+</pre>
+
+</div>
+
+<div class="section">
+
+<a name="ref4"><h2>Two in a Row</h2></a>
+
+
+<p>The next step that will drive us forward seems to be adding multiple words.
+   So as not to tempt fate, let's try two...</p>
+
+<pre class="code">
+[TestFixture]
+public class MagnetTests
+{
+    ...
+
+    <b>[Test]
+    public void TwoMagnets()
+    {
+        magnets.Add( "Hello" );
+        magnets.Add( "World" );
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }</b>
+}
+</pre>
+
+<p>Of course, we're only saving the last magnet added, so the new test fails
+   with the message...</p>
+
+<pre class="code">expected: &lt;"Hello World"&gt;
+ but was: &lt;"World"&gt;</pre>
+
+<p>At this point, we have a choice. We can either build up the text as magnets
+   are added or we can save all the magnets, creating the text only when we
+   are asked for it. Either way will work for this test and we can always 
+   refactor later. I'm going to use the first approach for now, since
+   it's the simplest thing to do...</p>
+
+<pre class="code">
+public class MagneticSurface
+{
+    <b>private string text = "";</b>
+
+    public string Text
+    {
+        <b>return text;</b>
+    }
+
+    public void Add( string magnet )
+    {
+        <b>if ( this.text != string.Empty )
+            this.text += " ";
+        this.text += magnet;</b>
+    }
+}
+</pre>
+
+<p>All the tests are passing now. We could do tests with three, four or more
+   magnets, but it doesn't look as if that would teach us anything more about
+   the code. It would be OK to write those tests, but we'd be doing testing, 
+   not Test-Driven Development.</p>
+   
+</div>
+
+<div class="section">
+
+<a name="ref5"><h2>You're Out of Order!</h2></a>
+
+
+<p>While we've made some tests pass, we clearly have not yet addressed one
+   of the major issues of the problem we are trying to solve: figuring out
+   the best order in which to put words together. So far, we've merely
+   concatenated the test on the magnets in the order they were added to
+   the surface. That's far from useless: these basic tests must continue
+   to pass no matter how we modify our approach. To demonstrate the 
+   problem, we add another test...</p>
+
+<pre class="code">[TestFixture]
+public class MagnetTests
+{
+    ...
+
+    <b>[Test]
+    public void TwoMagnetsInWrongOrder()
+    {
+        magnets.Add( "World" );
+        magnets.Add( "Hello" );
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }</b>
+}</pre>
+
+<p>This one fails, as expected. What's more, we can't make it pass in
+   any useful way without breaking the earler <b>TwoMagnets</b> test.
+   Oh sure, we could do them in alphabetic order, but that doesn't 
+   seem like a fruitful path to follow.</p>
+
+<p>The problem is that we aren't providing enough information. Magnets
+   are supposed to have a location as well as text content. Using a
+   string to represent the magnet won't take us much further. In
+   addition, our decision to build up the text as magnets are added
+   appears to limit our options at this point.</p>
+
+<p>It's good to take a break on a red bar. That way, when you return
+   to the program, you know exactly what needs to be fixed next. So
+   lets end this episode right here. But first, let's have a...</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref6"><h2>Retrospective</h2></a>
+
+
+<p>I like to end each verse... uhh, I mean iteration... with a 
+   retrospective. What did we do? What went well? What problems
+   arose? What would we do differently next time?</p>
+
+<p>In this case, we started very simply. We postponed creating
+   an object to represent the magnets and used a string instead.
+   We took this approach as far as we could and we'll clearly
+   need to refactor before we can move ahead with our tests.</p>
+
+<p>Is this a problem? Should we have thought ahead? Time will tell,
+   but I don't think so. None of this took long to do and even if
+   we erased it all and started over, what we learned in the process
+   would stay with us and make the rewrite easier.</p>
+
+<p>That said, I don't think we'll need to do anything quite so drastic. Next
+   time, we'll take the code as it is and try to take the
+   location of the magnets into account.</p>
+
+</div>
+
+</div>
+<!-- End Content -->
+
+
+<!-- Standard CharliePoole.org footer -->
+<div id="footer">
+Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
+<big>c</big>harlie<big>p</big>oole at gmail dot com
+</div>
+
+</body>
+</html>

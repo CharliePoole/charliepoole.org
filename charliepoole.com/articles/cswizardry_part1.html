@@ -1,0 +1,478 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<!-- Standard Head Part -->
+<head>
+<title>Charlie Poole - Cswizardry&nbsp;Part1</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script src="/js/common.js"></script>
+</head>
+<!-- End Standard Head Part -->
+
+<body>
+
+<!-- Standard header -->
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole</a></div>
+    <ul id="topnav">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/articles.html">Articles</a></li>
+        <li><a href="/events.html">Events</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <div id="menu-button" onclick="toggleMenuDisplay()">
+        <img src="/images/menu-button.png"/>
+    </div>
+</div>
+<!-- End of Header -->
+    
+<!-- Content -->
+<div id="content">
+
+<!-- Title Block -->
+<h1>C# Wizardry: Getting Started<br>
+<span class="author">Charlie Poole</span><br>
+<span class="date">9/25/2002</span></h1>
+
+
+
+
+
+<div class="rightbar">
+<p><b>Note:</b> <i>The code for this article was developed under 
+   Visual Studio .NET 2002.</i></p>
+</div>
+
+<div class="contents"><h3></h3>
+  <div><a href="#ref1">Introduction</a></div>
+  <div><a href="#ref3">Creating the Project</a></div>
+  <div><a href="#ref4">Making It a Wizard</a></div>
+  <div><a href="#ref6">Calling the Wizard</a></div>
+  <div><a href="#ref8">What's Next?</a></div>
+</div>
+
+<div class="section">
+
+<a name="ref1"><h2>Introduction</h2></a>
+
+
+<p>Let's face it. Wizards are handy. Sure, you can type stuff in, but it's nice to
+   just click on a few controls and have the code generated for you. And Visual
+   Studio has lots of nice wizards to do exactly what you want... well maybe not
+   exactly. That's when you start thinking about rolling your own.</p>
+   
+<p>This article is about the process of writing a C# wizard to generate test
+   fixture classes. I'm using <a href="http://sourceforge.net/projects/nunit">
+   NUnit</a> version 2.0 as a test framework. It identifies
+   test fixtures and methods by use of attributes, which seems in the .Net spirit.
+   NUnit is an open source project so you can download and use it for free.</p> 
+
+<p>To make things a bit more interesting, I wanted my wizard to generate
+   test stubs for each public method of an application class selected by the user.
+   The class could be in the same project or another project in the same solution
+   and will be chosen through a dropdown list.</p>
+   
+<p>There is a lot of info in the Visual Studio documentation for writing your own
+   "wizards" but most of it is based on using the wizard dll that Microsoft provides.
+   By use of templates, JScript and HTML, you can accomplish quite a lot. If you'd 
+   like to try this approach, take a look at 
+   <a href="http://www.xprogramming.com/xpmag/acsAddTestFixture.htm">
+   Ron Jeffries' article</a>.</p>
+   
+<p>But that's not what I wanted to do. I'm writing Windows forms code in C#, and 
+   I'd like to write my wizards the same way. So in this article, I'll first 
+   describe how to set up a basic "do nothing" wizard and then gradually add
+   to it. The steps I'm showing are pretty much the order in which I figured
+   it out myself, but since this is a how-to article, I've left out some of
+   the false starts and dead ends.</p>
+    
+<p>The sidebar gives a preliminary introduction to how Visual Studio finds and
+   executes wizards. You may find it useful to read this before continuing.</p>
+   
+<div class="sidebar">
+
+<a name="ref2"><h2>How Wizards Work</h2></a>
+
+
+<p>There are three main categories of C# wizards that Visual Studio can invoke.
+   <dl>
+      <dt>Project Wizards</dt>
+          <dd>Used to create new projects, e.g. the Windows Application Wizard</dd> 
+          <dt>Item Wizards</dt>
+          <dd>Used to add items to a project, e.g. the Add Class Wizard</dd>
+          <dt>Context Wizards</dt>
+          <dd>Used to add something to an existing item, e.g. the Add Property Wizard</dd>
+   </dl>
+   As far as I know, it's not possible to have your own Context Wizard called
+   without writing a Visual Studio Addin (maybe a future article) but
+   the other two are relatively straightforward.</p>
+   
+<p>Both Project and Item wizards are found by Visual Studio in the same way:
+   <ol>
+      <li>A file of type .vsdir is found in a known location under your Visual
+                  Studio install root - "C:\Program Files\Microsoft Visual Studio .NET"
+                  if you took the default values for installation.</li>
+          <li>For a C# Item Wizard, that known location is the set of subdirectories
+              under the VC#\CSharpProjectItems subdirectory If there are multiple 
+                  files of this type in the same directory, their contents are combined.</li>
+          <li>Each entry in a .vsdir file contains the relative path of a .vsz file.</li>
+          <li>One of the lines in the .vsz file gives the ProgId for the wizard to 
+                  be called. Other lines give parameters that are passed to the wizard.</li>
+          <li>The ProgId is a friendly name which can be looked up in the registry in
+              several steps to eventually locate the correct dll and instantiate the
+                  wizard object.        This is the world of COM, so we're talking about 
+                  a COM object here.</li>
+          <li>Visual Studio calls the Execute method of the wizard object. What happens
+              then depends on how we've programmed the wizard.</li>
+   </ol></p>
+   
+</div>
+
+</div>
+
+<div class="section">
+
+<a name="ref3"><h2>Creating the Project</h2></a>
+
+
+<p>Let's get some boilerplate out of the way first. Create a new C# project using 
+   the standard Class Library wizard. Or if you prefer just type it all in... I
+   don't care. My project is called WizardExample. I renamed the automatically
+   created Class1.cs file as Wizard.cs and called the class it implements Wizard.</p>
+   
+<p>We'll need a few extra references. Use Add Reference and select envdte from
+   the .Net tab. That brings in the object model used in Visual Studio. Since we'll
+   be using a MessageBox now and a Form later, we also need a reference to
+   System.Windows.Forms. When we create a Windows Application project, Visual
+   Studio adds that for us automatically. But since this is a Class Library,
+   we need to do it ourselves.</p>
+
+<p>Edit the Wizard.cs file to add some using statements and a new attribute on
+   the class. It should end up looking something like mine, depending on what
+   you have called everything.</p>
+   
+<div class="floatnone"><div class="figure">
+
+<pre class="code"><b>
+using System;
+using EnvDTE;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+
+namespace WizardExample.Step1
+{
+        /// &lt;summary&gt;
+        /// Summary description for Wizard.
+        /// &lt;/summary&gt;
+        [ProgId("Wizard.Example.Step1")]
+        public class Wizard
+        {
+                public Wizard()
+                {
+                        //
+                        // TODO: Add constructor logic here
+                        //
+                }
+        }
+}
+</b></pre>
+
+</div>Figure 1 - A Do-Nothing Wizard</div>
+
+<p>System.Runtime.InteropServices is the namespace that contains everything related
+   to communication between .Net programs and older types - COM for example. We are
+   using its ProgIdAttribute class when we apply the attribute of the same name
+   to our class in the line
+<pre class="code">
+        [ProgId("Wizard.Example.Step1")]
+</pre>
+   When it sees this attribute, Visual Studio does a lot of work that COM programmers
+   once did by hand. It creates a wrapper class that allows our class to be called 
+   as a COM object. It also generates code to register our
+   dll correctly so that it can be located by its ProgId. The particular ProgId 
+   you select is up to you. I put Step1 in the name so I could have several
+   versions of my wizard available at one time.</p> 
+
+<p>Before compiling this, we need to change a project setting so that the COM
+   Interop registration is performed. Go to the project's property pages and under
+   Configuration Properties look at the Build sub item. Change the setting
+   "Register for COM interop" to <b>True</b>. Make sure you select All Configurations
+   in the drop-down list when doing this. Otherwise, only the current configuration
+   - probably Debug - of your dll will be registered when you build it. If you later
+   switch to a release build, you'll find the wizard no longer runs.</p>
+   
+<div class="floatnone"><div class="figure">
+   <div class="floatnone"><img src="cswizardry_image1.gif"></div>
+</div>Figure 2 - Settings for COM Registration</div>
+
+<p>When you compile, you should
+   see the following message in the Output window.
+   <pre class="code">Registering project output for COM Interop...</pre> 
+   Now we just have to make it do something!</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref4"><h2>Making It a Wizard</h2></a>
+
+
+<p>What makes a wizard a wizard? Basically, it's a dll with a class that
+   implements the IDTWizard interface. That interface contains only one
+   method, defined as follows:
+<pre class="code">
+void Execute(
+   object Application,
+   int hwndOwner,
+   object[] ContextParams,
+   object[] CustomParams,
+   ref wizardResult retval );
+</pre>
+   This is the method that Visual Studio calls to activate our wizard. See the
+   sidebar for the meaning of the arguments.</p> 
+
+<div class="sidebar">
+
+  <a name="ref5"><h2>Execute Method Arguments</h2></a>
+
+  
+  <dl>
+          <dt>Application</dt>
+          <dd>The root object of the Visual Studio environment.</dd>
+          <dt>hwndOwner</dt>
+          <dd>Handle of the parent window for any windows we display.</dd>
+          <dt>ContextParams</dt>
+          <dd>Standard parameters that differ according to how the wizard is called.</dd>
+          <dt>CustomParams</dt>
+          <dd>Array of parameters set in the .vsz file that called us.</dd>
+          <dt>wizardResult</dt>
+          <dd>Return value passed back to Visual Studio.</dd>
+  </dl>
+  
+</div>
+
+<p>Just to have something for our effort, and to show how wizards get called,
+   I fixed up the code for my initial wizard to display some information.
+   Figure 3 shows what I ended up with.</p>
+
+<div class="floatnone"><div class="figure">
+
+<pre class="code">
+[ProgId("Wizard.Example.Step1")]
+public class Wizard : IDTWizard
+{
+    <b>private string wizardType;
+
+    private string projectName, itemName;
+    private string localDirectory, installDirectory;
+
+    private ProjectItems projectItems;</b>
+
+    public Wizard()
+    {
+    }
+
+    <b>public void Execute ( object application , 
+                             int hwndOwner , 
+                             ref object[] contextParams , 
+                             ref object[] customParams , 
+                             ref EnvDTE.wizardResult retval )
+    {
+        wizardType = (string) contextParams[0];
+        string msg;
+                        
+        if ( wizardType.ToUpper() != 
+                EnvDTE.Constants.vsWizardAddItem )
+        {
+            msg = "WizardExample was called incorrectly."
+                + "This wizard is designed to add items "
+                + "to a project.\n\nThe .vsz and .vsdir "
+                + "files should be installed in the";
+                + "VC#\\CSharpProjectItems directory.";
+                                
+            MessageBox.Show( msg, "WizardExample" );
+
+            retval = wizardResult.wizardResultFailure;
+            return;
+        }
+
+        projectName = (string) contextParams[1];
+        projectItems = (ProjectItems)contextParams[2];
+        localDirectory = (string) contextParams[3];
+        itemName = (string) contextParams[4];
+        installDirectory = (string) contextParams[5];
+
+        msg = "WizardExample was called with "
+            + "the following arguments:\n\n"
+            + "Wizard Type:\tAdd Item\n"
+            + "Project Name:\t" + projectName + "\n"
+            + "Project Items: (collection passed as 
+            + "third argument)\n"
+            + "Local Directory:\t" + localDirectory + "\n"
+            + "Item Name:\t" + itemName + "\n"
+            + "Install Directory:\t" + installDirectory + "\n\n"
+            + "Custom Parameters:";
+
+        foreach( string s in customParams)
+            msg += "\n\t" + s;
+
+        MessageBox.Show( msg, "WizardExample" );
+
+        retval = wizardResult.wizardResultSuccess;
+    }</b>
+}
+</pre>
+
+</div>Figure 3 - A Wizard That Displays Its Parameters</div>
+
+<p>The Execute method saves the information passed to it in various private fields
+   of the object - we'll need them in later stages. It checks the first field
+   before doing anything else to avoid exceptions which would be thrown otherwise.
+   We're working in the late-bound world here, and we can't be sure we know the
+   types of the objects we were passed without checking the context of the call.</p>
+   
+<p>If we were called as anything but an Add Item wizard, we can't do anything
+   but give an error message and exit. If you'd like to see this message, I'll
+   tell you how to make it show up later. If we were called properly, we get
+   the rest of our arguments and display all the strings in a message box. The
+   Project Items collection is something we'll use later.</p>
+
+</div>
+   
+<div class="section">
+
+<a name="ref6"><h2>Calling the Wizard</h2></a>
+
+
+<p>Visual Studio invokes wizards through a file of type .vsz. Mine is called
+   WizardExampleStep1.vsz and I saved it in my VC#/CSharpProjectItems directory. 
+   It really doesn't matter where I save it, but this will turn out to be a 
+   convenient place. It's a text file, and contains the following lines:
+<pre class="code">
+VSWIZARD 7.0
+Wizard="Wizard.Example.Step1"
+Param="Some parameter string"
+Param="Another parameter string"
+</pre>
+   The first two lines are all that is required. The value given in quotes
+   after Wizard= matches the ProgId of our wizard, which is how the system
+   is able to find and execute it. The two param lines are just there
+   to give the message box something to display.</p>
+
+<p>We're not quite done, however. Visual Studio needs to be told to list
+   this wizard as an option when adding a new item to a project. The Add Item
+   dialog has a tree structure on the left and icons representing available
+   items on the right. The tree structure is determined by the contents of the 
+   VC#\CSharpProjectItems directory in your Visual Studio .Net installation.</p>
+   
+<p>For this example, we'll make our wizard appear under Local Project Items. I 
+   created a file called WizardExamples.vsdir in that directory. The name I used
+   is unimportant and I could even have edited the existing .vsdir file, but using
+   a separate file makes it easier to avoid messing up other things. Initially,
+   this file will contain a single line, a set of tokens separated by pipe symbols.
+   Later, we can add other lines as we complete more wizards. See the sidebar for
+   a description of the tokens. Unused tokens should be replaced by 0.</p>
+   
+<div class="sidebar">
+  <a name="ref7"><h2>Tokens in the .VSDIR File</h2></a>
+
+  <dl>
+          <dt>RelPathName</dt>
+          <dd>Required. The relative path to the .vsz file.</dd>
+          <dt>{clsidPackage}</dt>
+          <dd>Optional. A GUID representing a product with localized resources.</dd>
+          <dt>LocalizedName</dt>
+          <dd>Optional. The text to display under the icon in the Add Item dialog</dd>
+          <dt>SortPriority</dt>
+          <dd>The relative ordering of this item compared to others.</dd>
+          <dt>Description</dt>
+          <dd>The text to display when the icon is selected in the dialog.</dd>
+          <dt>DLLPath or {clsidPackage}</dt>
+          <dd>Path or GUID for an application that contains the icon to display.</dd>
+          <dt>IconResourceId</dt>
+          <dd>The icon resource id. [I copied this and the preceding item from Add Class.]</dd>
+          <dt>Flags</dt>
+          <dd>Flags that indicate what dialog fields are available. With 0 you get vanilla.</dd>
+          <dt>SuggestedBaseName</dt>
+          <dd>The template to use for the item file name. Visual Studio adds 1, 2... as needed.</dd>
+  </dl>
+</div>
+
+<p>Here is the whole line from my file. It's broken into two pieces for readability
+   but if you copy and paste it, put it all in one line.</p>
+
+<pre class="code">
+..\WizardExampleStep1.vsz|0|Step 1|45|Just displays a message|
+{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}|4515|0|WizardExample.cs
+</pre>
+
+<p>With these two files in place, we are ready to test. Run another
+   copy of Visual Studio to be sure you pick up the new wizard. Later on, we may need
+   to debug this, so it's convenient to set the project's Debug Mode
+   to Program, and the application to the Visual Studio environment itself (devenv.exe)
+   and run it that way. Open a project under your new instance of Visual Studio. 
+   Right now we aren't changing anything, but later we will, so a throwaway project 
+   is useful. I keep a TestProject around with a single class and a single form.</p>
+
+<p>Select Add New Item from the Project menu or by right-clicking on the project
+   in Solution Explorer. If you placed the files where I did, you should see
+   an icon marked Step 1 under Local Project Items. If you highlight it, you'll 
+   see the text "Just displays a message". Select it and the dialog box should 
+   appear looking something like Figure 4.</p>
+
+<div class="floatright"><div class="figure">
+   <div class="floatnone"><img src="cswizardry_image2.gif"></div>
+</div>Figure 4 - Wizard Output</div>
+
+<p>If you aren't seeing the icon displayed under Local Project Items, either the
+   .vsdir file is incorrect or you don't have a .vsz file at the relative location
+   pointed to by the first token. If you see a message saying that your wizard
+   can't be executed, you probably forgot to change the project properties to
+   do the COM registration. If the program executes but some unexpected error
+   is thrown, you can debug it by stepping through just as with any other library.
+   Set devenv.exe as the application to run and set your breakpoint before firing
+   off the wizard.</p>
+
+<p>If you'd like to see the wizard display its error message, copy the .vsdir file
+   into the CSharpProjects directory and the .vsz file into the VC# directory - that
+   way the relative path will still be correct. Run a copy of Visual Studio and
+   try to add a project. One of the choices is now Step 1. But when you select
+   it, the wizard displays the message telling you that your files are in
+   the wrong place.</p>
+
+<p>You can put a copy of the .vsdir file into the Web Project Items directory 
+   if you want to see it when you're working on a web project. You can also make
+   it appear in one of the subcategories, "Code" for example, by copying it into
+   that directory and modifying the relative path to the .vsz file accordingly.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref8"><h2>What's Next?</h2></a>
+
+
+<p>We still haven't generated any code using the wizard.
+   In the next article in this series, we'll do that and even provide the
+   user with a way to make some choices about how the code is generated.
+   In the third and final article, we'll actually tailor the tests that are 
+   generated to a target class selected by the user.</p>
+   
+</div>
+
+</div>
+<!-- End Content -->
+
+
+<!-- Standard CharliePoole.org footer -->
+<div id="footer">
+Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
+<big>c</big>harlie<big>p</big>oole at gmail dot com
+</div>
+
+</body>
+</html>

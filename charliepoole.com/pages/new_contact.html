@@ -1,0 +1,47 @@
+<h2>You can reach me...</h2>
+<h4 style="margin-left: 4em">by Email</h4>
+<p style="margin-left: 10em">
+<?=CP_EMAIL?>
+<p>
+<style>
+  #contact { width: 40em; }
+  #contact td.lbl { width: 10em; }
+  #contact td.inp { width: 20em; }
+  #contact input, #contact select, #contact textarea { width: 100%; }
+  #contact textarea { height: 20em }
+</style>
+<form id="contact"><table>
+<tr>
+  <td class="lbl">Your Email Address:</td>
+  <td class="inp"><input type="textbox" name="email"></td>
+</tr>
+<tr>
+  <td class="lbl">Subject:</td>
+  <td class="inp">
+	<select name="subject">
+      <option selected value="1">I need help</option>
+      <option value="2">Send me info</option>
+   </select>
+  </td>
+</tr>
+<tr>
+<td colspan="2">
+  Message:<br>
+  <textarea name="message"></textarea>
+</td>
+</tr>
+</table>
+</form>
+
+<h4 style="margin-left: 4em">by Postal Mail</h4>
+<p style="margin-left: 10em">
+Charlie Poole<br>
+20224 Pond View Lane NE<br>
+Poulsbo, WA 98370
+<p>
+
+<h4 style="margin-left: 4em">by Phone</h4>
+<p style="margin-left: 10em">
+(360) 697-4574
+<p>
+

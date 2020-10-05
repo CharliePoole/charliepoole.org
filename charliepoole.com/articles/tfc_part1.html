@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<!-- Standard Head Part -->
+<head>
+<title>Charlie Poole - Tfc&nbsp;Part1</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script src="/js/common.js"></script>
+</head>
+<!-- End Standard Head Part -->
+
+<body>
+
+<!-- Standard header -->
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole</a></div>
+    <ul id="topnav">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/articles.html">Articles</a></li>
+        <li><a href="/events.html">Events</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <div id="menu-button" onclick="toggleMenuDisplay()">
+        <img src="/images/menu-button.png"/>
+    </div>
+</div>
+<!-- End of Header -->
+        
+<!-- Content -->
+<div id="content">
+
+<!-- Title Block -->
+<h1>Test First Challenge: Getting Started<br>
+<span class="author">Charlie Poole</span><br>
+<span class="date">January, 2002</span></h1>
+
+
+
+
+
+<p>Bill Wake created the 
+   <a href="http://xp123.com/xplor/xp0201/">Test-first Challenge</a>
+   as a way for people to practice 
+   <a href="http://www.c2.com/cgi/wiki?CodeUnitTestFirst">test-first</a>.
+   He provided a set of tests that drive the development of a simple spreadsheet
+   application. A number of people who frequent the extreme programming list wrote
+   code in response to Bill's tests, including me.</p>
+   
+<p>I'm using C++, so first off I had to spend some time initially getting CppUnit
+   to work correctly on my system. It's a bit annoying how the assertEquals requires
+   two objects of the same type. At least in VC 6.0, you can't use string constants
+   to the comparison with string objects. I think it's because assertEquals is a 
+   template, and VC is not doing the matching 100% correctly. For now, I'm not trying
+   to fix it, so I have to use String("Some string") in various places.</p>
+
+<p>Even though I know Bill regrets using only one cell for all the tests, I didn't 
+   deal with it in part 1. My initial version for part 1 looks pretty
+   much like everyone else's.</p>
+
+<pre class="code"><b>
+class Sheet
+{
+public:
+    Sheet();
+    virtual ~Sheet();
+	
+    String get( const String& cellName ); 
+    String getLiteral( const String& cellName );
+	
+    void put( const String& cellName, const String& cellValue );
+private:
+    String m_content;
+};
+
+String Sheet::get( const String & )
+{
+    if ( m_content.isNumeric() )
+        return m_content.trim();
+    else
+        return m_content;
+}
+
+String Sheet::getLiteral( const String& cellName )
+{
+    return m_content
+}
+
+void Sheet::put( const String & cellName, const String& cellValue )
+{
+    m_content = cellValue;
+}
+</b></pre>
+
+<p>The isNumeric and trim functions were originally part of Sheet with slightly
+   different names. All the functions used std::string directly. After all the
+   tests passed, I decided to refactor by deriving a String class from std::string
+   and making isNumeric and trim members. I confess that I didn't write tests
+   for the String class but I think the existing tests cover it well enough.</p>
+
+<p>Things get a bit more interesting in <a href="tfc_part2.html">Part2</a>.</p>
+
+</div>
+<!-- End Content -->
+
+<!-- Standard CharliePoole.org footer -->
+<div id="footer">
+Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
+<big>c</big>harlie<big>p</big>oole at gmail dot com
+</div>
+
+</body>
+</html>

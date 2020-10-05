@@ -1,0 +1,608 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<!-- Standard Head Part -->
+<head>
+<title>Charlie Poole - Cswizardry&nbsp;Part2</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script src="/js/common.js"></script>
+</head>
+<!-- End Standard Head Part -->
+
+<body>
+
+<!-- Standard header -->
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole</a></div>
+    <ul id="topnav">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/articles.html">Articles</a></li>
+        <li><a href="/events.html">Events</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <div id="menu-button" onclick="toggleMenuDisplay()">
+        <img src="/images/menu-button.png"/>
+    </div>
+</div>
+<!-- End of Header -->        
+
+<!-- Content -->
+<div id="content"><tr>
+
+<!-- Title Block -->
+<h1>C# Wizardry: A Real Wizard<br>
+<span class="author">Charlie Poole</span><br>
+<span class="date">9/27/2002</span></h1>
+
+
+
+
+
+<div class="contents"><h3></h3><div><a href="#ref1">A Quick Design Session</a>
+</div><div><a href="#ref2">A Wizard's Job</a>
+</div><div><a href="#ref3">User Input</a>
+</div><div><a href="#ref4">Code Generation</a>
+</div><div><a href="#ref5">Making It Run</a>
+</div><div><a href="#ref6">Next Steps</a>
+</div></div>
+
+<div class="section">
+
+<a name="ref1"><h2>A Quick Design Session</h2></a>
+
+
+<p>In the <a href="cswizardry_part1.html">first article</a>
+of this series, we managed to get Visual Studio to recognize our program as
+a wizard and call it. But it doesn't do anything!</p>
+
+<p>To make this a real wizard, we need to generate some code. And to make it a bit 
+   more interesting, we'll be accepting some user input to indicate the naming
+   pattern for tests and whether SetUp and TearDown methods should be included
+   in the fixture.</p>
+   
+<p>When I did this the first time around, I delayed creating a separate
+   object to do the code generation. I put it right in the wizard class. When
+   I added a user input dialog, I again held off and moved the code generation
+   into the form's Finish button handler. Finally, when I was about to add a 
+   second dialog, I was ready for a TestFixtureGenerator to emerge.
+   For this article, I'm using the code generator class
+   right from the beginning, but I thought you'd like to know that it really
+   emerged as I worked my way into the problem.</p>
+   
+<p>Of course, we'll need to have a Form-based class for our input. This will be
+   the TestFixtureOptionsForm. It will be created with a reference to the wizard,
+   and will use that reference to access the code generator. Future forms will
+   work the same way. Here's a little whiteboard diagram of how my wizard 
+   application hangs together:</p>
+
+<div class="floatnone"><div class="figure">
+   <div class="floatnone"><img src="cswizardry_image3.gif"></div>
+</div>Figure 1 - The Design That Emerged</div>
+
+<p>The arrows show that the Wizard class creates the others. The forms save
+   a reference to the Wizard and use properties to save their results. One property
+   of the wizard is a reference to the TestFixtureGenerator and the form uses it
+   to set the generation options directly, as we'll see in the following sections.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref2"><h2>A Wizard's Job</h2></a>
+
+
+<p>In this design, the job of the Wizard class is to accept invocation 
+   parameters from the Visual Studio environment, display the user input
+   form and call the generator to create the code. Here's my
+   wizard code for this step.</p>
+   
+<div class="floatnone"><div class="figure">
+<pre class="code">[ProgId("Wizard.Example.Step2")]
+public class Wizard : IDTWizard
+{
+    private string wizardType;
+
+    private string projectName, itemName;
+    private string localDirectory, installDirectory;
+
+    private ProjectItems projectItems;
+
+    <b>private TestFixtureGenerator generator;
+                
+    private wizardResult result;</b>
+
+    public Wizard()
+    {
+    }
+
+    <b>public string ProjectName
+    {
+        get { return projectName; }
+    }
+
+    public string ItemName
+    {
+        get { return itemName; }
+    }
+
+    public wizardResult Result
+    {
+        get { return result; }
+        set { result = value; }
+    }
+
+    public TestFixtureGenerator Generator
+    {
+        get { return generator; }
+    }</b>
+
+    public void Execute( object application , 
+                         int hwndOwner , 
+                         ref object[] contextParams , 
+                         ref object[] customParams , 
+                         ref EnvDTE.wizardResult retval )
+    {
+        wizardType = (string) contextParams[0];
+                        
+        if ( wizardType.ToUpper() != EnvDTE.Constants.vsWizardAddItem )
+        {
+            <b>string</b> msg = "WizardExample was called incorrectly. "
+               + "This wizard is designed to add items to a project.\n\n"
+               + "The .vsz and .vsdir files should be installed in the "
+               + "VC#\\CSharpProjectItems directory.";
+                        
+            MessageBox.Show( msg, "WizardExample" );
+
+            retval = wizardResult.wizardResultFailure;
+            return;
+        }
+
+        projectName = (string) contextParams[1];
+        projectItems = (ProjectItems)contextParams[2];
+        localDirectory = (string) contextParams[3];
+        itemName = (string) contextParams[4];
+        installDirectory = (string) contextParams[5];
+
+        <b>generator = new TestFixtureGenerator( 
+                     projectName,
+                     projectItems, 
+                     localDirectory, 
+                     itemName, 
+                     installDirectory );
+
+        TestFixtureOptionsForm form = new TestFixtureOptionsForm( this );
+        form.ShowDialog();
+
+        if ( result  == wizardResult.wizardResultSuccess )
+            result = generator.Generate();
+
+        retval = result;</b>
+    }
+}
+</pre>
+</div>Figure 2 - The Wizard Class</div>
+
+<p>There are new private fields to hold the wizard result and the test generator
+   reference as well as properties to access those fields. There are properties
+   to access the context parameters passed into the wizard.</p>
+   
+<p>New code in the Execute method creates and displays the options form.
+   If the result code left by the form indicates success, the generator
+   is called to create the new text fixture. The generator, of course,
+   is accessible to the form and has been primed with the options chosen
+   by the user.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref3"><h2>User Input</h2></a>
+
+
+<p>Figure 3 shows the simple form I designed for User input. By design, it looks
+   very much like the forms that Wizards are supposed to display. It allows the
+   user to choose whether to include SetUp and TearDown methods and, if so, what 
+   to call them. It allows a prefix and/or suffix to be applied to the names of
+   test methods.</p>
+    
+<div class="floatnone"><div class="figure">
+   <div class="floatnone"><img src="cswizardry_image4.gif"></div>
+</div>Figure 3 - User Input Form</div>
+
+<p>The Finish button causes the code to be generated using the options selected.
+   The Back and Cancel buttons send you back to the Add Items dialog. The Help
+   button is ignored for the moment.</p>
+   
+<p>The code behind the form is mostly generated by the designer, so I'll only 
+   show selected portions. The constructor saves references to the wizard
+   and the code generator in private variables.</p>
+   
+<pre class="code">
+public TestFixtureOptionsForm( <b>Wizard wizard</b> ) <b>: base ()</b>
+{
+        //
+        // Required for Windows Form Designer support
+        //
+        InitializeComponent();
+
+        <b>this.wizard = wizard;
+        this.generator = wizard.Generator;</b>
+}
+</pre>
+
+<p>The load event handler sets up the initial values on the form. When the
+   Finish button is clicked, the form takes the user-entered values and
+   uses them to set properties on the code generator.</p>
+
+<pre class="code">
+<b>private void finishButton_Click(object sender, System.EventArgs e)
+{
+        generator.SetupMethod = setupCheckBox.Checked;
+        generator.TeardownMethod = teardownCheckBox.Checked;
+        generator.SetupMethodName = setupMethodTextBox.Text;
+        generator.TeardownMethodName = teardownMethodTextBox.Text;
+
+        generator.TestCasePrefix = testPrefixTextBox.Text;
+        generator.TestCaseSuffix = testSuffixTextBox.Text;
+
+        wizard.Result = wizardResult.wizardResultSuccess;
+        this.Close();                                                                      
+}</b>
+</pre>
+
+</div>
+
+<div class="section">
+
+<a name="ref4"><h2>Code Generation</h2></a>
+
+
+<p>All that remains is for the code generator to produce the code. There are
+   various ways to do this, including use of templates and accessing the source
+   file through the Visual Studio object model. I chose what seemed to be the
+   simplest approach: creating a file in the project directory using normal
+   file writes and then adding that file to the project. Aside from its 
+   simplicity, this approach allows me to test the code generation routines
+   separately - the only way I know how.</p>
+   
+<p>The constructor for the TestFixtureGenerator saves the arguments
+passed to it in private fields.</p>
+
+<pre class="code">
+public TestFixtureGenerator( string projectName, 
+        ProjectItems projectItems, 
+        string localDirectory, 
+        string itemName, 
+        string installDirectory )
+{
+        this.projectName = projectName;
+        this.projectItems = projectItems;
+        this.project = (Project) projectItems.Parent;
+        this.localDirectory = localDirectory;
+        this.itemName = itemName;
+        this.installDirectory = installDirectory;
+}
+</pre>
+
+<p>We are making use of the Visual Studio general extensibility model here. A
+   key object in this model is Project which represents - as you might expect - a 
+   Visual Studio project. When the wizard was called, we were given a ProjectItems
+   collection containing all of the items - source files for example - in our
+   particular project. The Parent property of this collection is known to be
+   a Project so we can safely cast it.</p>
+   
+<p>The Generate method wraps all its activity in a try/catch block so we don't
+   have to worry about file failures anywhere else. It starts out by ensuring
+   that the project has a reference to the NUnit framework. It then opens a 
+   writer on the file we are trying to create, using a private member to
+   make the writer accessible to the other methods that help create the file.</p>
+
+<div class="floatnone"><div class="figure">   
+<pre class="code"><b>public wizardResult Generate()
+{
+    try
+    {
+        AddNUnitReferenceToProject();
+
+        string filePath = Path.Combine( localDirectory, itemName );
+        using( this.writer = new StreamWriter( filePath ) )
+        {
+            GenerateCSharpFile();
+        }
+
+        ProjectItem projectItem = projectItems.AddFromFile( filePath );
+        Window itemWindow = projectItem.Open( Constants.vsViewKindCode );
+        itemWindow.Activate();
+
+        return wizardResult.wizardResultSuccess;
+    }
+    catch
+    {
+        return wizardResult.wizardResultFailure;
+    }
+}
+</b></pre>
+</div>Figure 4 - Generate Method</div>
+
+<p>Once the file is created, it is added to the ProjectItems collection which has
+   the effect of making it part of the project. We next use a Windowr object -
+   also part of the Visual Studio extensibility model - to ensure that the code for
+   this new class is open and active when the wizard terminates.</p>
+   
+<p>The code that adds the NUnit reference to the project is a bit of a surprise.
+   For this purpose, we are forced to make use of an entirely different object model!
+   The VSLangProj namespace supports a more detailed object model that is only
+   applicable to projects written in C# and Visual Basic. (There's even another
+   object model that pertains to C++, but we won't go into that here.) The syntax
+   used to "cast" our Project to a VSProject is the standard idiom for going between
+   these different object models when necessary. I didn't add a using statement
+   for this namespace, so I'm spelling it out. However, a reference to VSLangProj
+   must be added to the project in order for it to compile.
+   
+<pre class="code"><b>private void AddNUnitReferenceToProject()
+{
+        VSLangProj.VSProject vsProject;
+        vsProject = (VSLangProj.VSProject)project.Object;
+        vsProject.References.Add( "nunit.framework.dll" );
+}
+</b></pre></p>
+
+<p>The GenerateCSharpFile method writes the new class file to the project directory.
+   It needs to first get two values for inclusion in the file: the root namespace
+   for the project and a class name containing only characters that are legal
+   for that purpose. Once it does that, it uses a helper method to write out a
+   series of lines and calls other helpers to insert setup, teardown and test methods.
+   The indent field is used by lower level methods to format the code.</p>
+
+<div class="floatnone"><div class="figure">
+
+<pre class="code"><b>private void GenerateCSharpFile()
+{
+        string rootNamespace = GetRootNamespace();
+        string className = MakeLegalClassName( itemName );
+        indent = 0;
+
+        WriteLine( "using System;" );
+        WriteLine( "using NUnit.Framework;\n" );
+        WriteLine( "namespace " + rootNamespace );
+        WriteLine( "{" );
+
+        ++indent;
+
+        WriteLine( "[TestFixture]" );
+        WriteLine( "public class " + className );
+        WriteLine( "{" );
+
+        ++indent;
+
+        if ( SetupMethod )
+                InsertSetupMethod();
+
+        if ( TeardownMethod )
+                InsertTeardownMethod();
+
+        InsertTestMethod( "SomeMethod" );
+        InsertTestMethod( "AnotherMethod" );
+
+        --indent;
+
+        WriteLine( "}" );
+
+        --indent;
+                                
+        WriteLine( "}" );
+}
+</b></pre>
+
+</div>Figure 5 - Generating the C# Source Code</div>
+
+<p>The short GetRootNamespace method introduces another quirk of the Visual
+   Studio object model. While some properties of objects are predefined, others
+   are dynamically added to a properties collection, which is basically a dictionary.
+   That means you can't use Intellisense to be prompted for the names of available
+   properties. You have to know they are there! In order discover the exact name
+   of the RootNamespace property I wrote a short method to display the names
+   of all properties in the Project.Properties collection.
+   
+<pre class="code"><b>private string GetRootNamespace()
+{
+        Property prop = project.Properties.Item( "RootNamespace" );
+
+        return prop.Value as string;
+}
+</b></pre></p>
+
+<p>Since the name of a file can contain characters like '-' and '#' that would
+   be illegal in a class name, the MakeLegalClassName method routine replaces
+   them '_' which is legal. The code is borrowed from a Microsoft sample application.</p>
+
+<div class="floatnone"><div class="figure">
+<pre class="code"><b>private string MakeLegalClassName( string fileName )
+{
+    string className = Path.GetFileNameWithoutExtension( fileName );
+
+    char[] chrClassName = className.ToCharArray(0, className.Length);
+    bool modified = false;
+    for (int iIndex = 0; iIndex &lt; chrClassName.Length; iIndex++)
+    {
+        if ((((chrClassName[iIndex] &gt;= 'a') &amp;&amp; 
+                      (chrClassName[iIndex] &lt;= 'z')) 
+          || ((chrClassName[iIndex] &gt;= 'A') &amp;&amp; 
+              (chrClassName[iIndex] &lt;= 'Z')) 
+          || ((chrClassName[iIndex] &gt;= '0') &amp;&amp; 
+              (chrClassName[iIndex] &lt;= '9')) 
+          || (chrClassName[iIndex] == '_')) == false )
+        {
+            chrClassName[iIndex] = '_';
+            modified = true;
+        }
+    }
+    if ( modified )
+        className = new string( chrClassName );
+
+    return className;
+}
+   
+private void InsertSetupMethod()
+{
+    InsertMethod( "SetUp", 
+                  SetupMethodName, 
+                  "Insert setup code here" );
+}
+
+private void InsertTeardownMethod()
+{
+    InsertMethod( "TearDown", 
+                  TeardownMethodName, 
+                  "Insert teardown code here" );
+}
+
+private void InsertTestMethod( string methodName )
+{
+    InsertMethod( "Test", 
+                  testCasePrefix + methodName + testCaseSuffix, 
+                  "Insert test code here"  );
+}
+
+private void InsertMethod( string attribute, 
+                           string methodName, 
+                           string todoComment )
+{
+    if ( nMethods > 0 ) WriteLine();
+
+    WriteLine( "[" + attribute + "]" );
+
+    WriteLine( "public void " + methodName + "()" );
+    WriteLine( "{" );   
+                        
+    if ( todoComment != null )
+    {
+        ++indent;       
+        WriteLine( "// ToDo: " + todoComment );
+        --indent;
+    }
+                        
+    WriteLine( "}" );
+
+    ++nMethods;
+}
+
+private void WriteLine( string text )
+{
+    for ( int i = 0; i &lt; indent; i++ )
+        writer.Write( '\t' );
+
+    writer.WriteLine( text );
+}
+
+private void WriteLine()
+{
+    writer.WriteLine();
+}
+</b></pre>
+</div>Figure 6 - Various Low-level Methods</div>
+
+<p>The other low-level methods that format the lines of code are straightforward
+   and require no comment.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref5"><h2>Making It Run</h2></a>
+
+
+<p>To make this new wizard available in Visual Studio, I first copied my  
+   WizardExampleStep1.vsz file as WizardExampleStep2.vsz. Then I edited it
+   to contain only the following lines:
+<pre class="code">
+VSWIZARD 7.0
+Wizard="Wizard.Example.<b>Step2</b>"
+</pre>
+   I next edited my WizardExamples.vsdir file, adding the following
+   as a second line.
+<pre class="code">
+..\WizardExampleStep2.vsz|0|Step 2|45|Generates a test fixture|
+{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}|4515|0|WizardExample.cs
+</pre></p>
+
+<p>Run a new copy of Visual Studio, open a project - an new one is OK - and
+   select Add New Item from the Project menu. If you did it as I did, you now
+   have Step1 and Step 2 Icons. Select Step 2 either accepting the suggested
+   file name, or changing it to one you like better.</p>
+   
+<p>Select whatever options you like in the dialog and click finish. A new
+   class file should be added to your project with the name you selected. It will
+   open in Visual Studio, and should look something like this, depending on
+   the options you chose:</p>
+   
+<div class="floatnone"><div class="figure">
+<pre class="code">using System;
+using NUnit.Framework;
+
+namespace TestProject
+{
+    [TestFixture]
+    public class WizardExample6
+    {
+        [SetUp]
+        public void SetUp()
+        {
+            // ToDo: Insert setup code here
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            // ToDo: Insert teardown code here
+        }
+
+        [Test]
+        public void SomeMethodTest()
+        {
+            // ToDo: Insert test code here
+        }
+
+        [Test]
+        public void AnotherMethodTest()
+        {
+            // ToDo: Insert test code here
+        }
+    }
+}
+</pre>
+</div>Figure 7 - Result of Running the Wizard</div>
+
+<p>Rebuild the project. The new code should compile correctly without change.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref6"><h2>Next Steps</h2></a>
+
+
+<p>A lot has been accomplished. The wizard generates code which can
+   be tailored (at least a little) based on user input. The code is part
+   of the project and it even compiles. In the next article, I'll take 
+   a look at how we include test methods in our fixture based on a particular
+   application class selected by the user.</p>
+
+</div>
+
+</div>
+<!-- End Content -->
+
+
+<!-- Standard CharliePoole.org footer -->
+<div id="footer">
+Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
+<big>c</big>harlie<big>p</big>oole at gmail dot com
+</div>
+
+</body>
+</html>

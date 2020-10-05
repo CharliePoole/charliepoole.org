@@ -1,0 +1,483 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<!-- Standard Head Part -->
+<head>
+<title>Charlie Poole - Poetry&nbsp;Magnets&nbsp;Part2</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script src="/js/common.js"></script>
+</head>
+<!-- End Standard Head Part -->
+
+<body>
+
+<!-- Standard header -->
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole</a></div>
+    <ul id="topnav">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/articles.html">Articles</a></li>
+        <li><a href="/events.html">Events</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <div id="menu-button" onclick="toggleMenuDisplay()">
+        <img src="/images/menu-button.png"/>
+    </div>
+</div>
+<!-- End of Header -->
+
+<!-- Content -->
+<div id="content">
+
+<!-- Title Block -->
+<h1>Poetry Magnets: Second Verse<br>
+<span class="author">Charlie Poole</span><br>
+<span class="date">November, 2005</span></h1>
+
+
+
+
+
+<div class="section">
+
+<a name="ref1"><h2>Where Were We?</h2></a>
+
+
+<p>I've been on vacation, so I didn't follow up on the 
+   <a href="poetry_magnets_part1.html">first part</a> of this series, as
+   quickly as I intended. So let's recap...</p>
+   
+<p>We're trying to solve this problem...</p>
+
+<ul>
+   <li>Magnets with words on them are placed on a surface. The 
+       magnets are rectangular in shape and are all the same height. Their length 
+       varies depending on their content. They may be placed in any location and
+	   oriented horizontally, vertically or at some other angle. Due to physical
+	   limitations, they may not overlap.</li>
+   <li>The program should take a list of magnets, with the location, orientation 
+       and content of each one, and produce a text string that concatenates them 
+       in the order a human would read them. The text should be broken into lines
+       if the layout "looks like" a set of lines.</li>
+</ul>
+
+<p>I deliberately chose a rather naive approach: the magnets were initially 
+   represented as strings, without any additional info as to their position.
+   We were able to get started but ran into a problem, as you might expect.</p>
+   
+<p>We want both of the following tests to pass...</p>
+
+<pre class="code">[TestFixture]
+public class MagnetTests
+{
+    ...
+
+	[Test]
+    public void TwoMagnets()
+    {
+        <b>magnets.Add( "Hello" );
+        magnets.Add( "World" );</b>
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }
+
+    [Test]
+    public void TwoMagnetsInWrongOrder()
+    {
+        <b>magnets.Add( "World" );
+        magnets.Add( "Hello" );</b>
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }
+}</pre>
+
+<p>...but one of them must obviously fail. We're only giving the MagneticSurface
+   two pieces of info about each magnet: the text and the order in which we place
+   them on the surface. The problem statement implies that each magnet should have
+   a position, so we need to add more info.</p>
+   
+<div class="sidebar">
+
+<a name="ref2"><h2>Why Didn't We Just Do It Right the First Time?</h2></a>
+
+
+<p>Actually, it <i>was</i> pretty clear that we would need a Magnet object at 
+   the start, so we might have created one right away. The problem is, we didn't
+   quite know what that object needed to do, so we might have given it too much
+   functionality, or the wrong functionality. Now we have a specific objective:
+   to make our latest test pass. And that's all the object needs to do for us
+   at the moment.</p>
+   
+</div>
+
+<p>We like to refactor on a green bar, so we first comment out (or Ignore) the
+   failing test, <b>TwoMagnetsInWrongOrder()</b>. All tests pass. Now, we need
+   to add a Magnet object, while keeping the tests passing.</p>
+   
+</div>
+
+<div class="section">
+
+<a name="ref3"><h2>Adding the Magnet Object</h2></a>
+
+
+<p>To keep things simple - and because this is after all a demonstration of 
+   programming in small steps - we'll first create a magnet object that has
+   nothing more than a text field. We rewrite all our tests to have code
+   similar to this...</p>
+   
+<pre class="code">
+[TestFixture]
+public class MagnetTests
+{
+    ...
+    [Test]
+    public void TwoMagnets()
+    {
+        <b>magnets.Add( new Magnet("Hello") );
+        magnets.Add( new Magnet("World") );</b>
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }
+    ...
+}
+</pre>
+
+<p>To make it compile, we need a magnet class...</p>
+
+<pre class="code">
+<b>public class Magnet
+{
+    public string Text;
+	
+    public Magnet( string text )
+    {
+        this.Text = text;
+    }
+}</b>
+</pre>
+
+<p>...and a small change to the <b>MagneticSurface</b> class...</p>
+
+<pre class="code">
+public class MagneticSurface
+{
+    private string text = "";
+
+    public string Text
+    {
+        <b>return text;</b>
+    }
+
+    public void Add( <b>Magnet</b> magnet )
+    {
+        if ( this.text != string.Empty )
+            this.text += " ";
+        <b>this.text += magnet.Text;</b>
+    }
+}
+</pre>
+
+<p>All tests continue to pass. Now, continuing to refactor, we'll add a horizontal
+   position to the magnet. We could also add a vertical coordinate and it wouldn't
+   do any harm. But we don't need it now and I'm making a point here: it's possible
+   to code <i>only what you need</i> for each test without doing an excessive 
+   amount of rework. Here's the new <b>Magnet</b> class...</p>
+   
+<pre class="code">
+public class Magnet
+{
+    <b>public int X;</b>
+    public string Text;
+	
+    public Magnet( <b>int x,</b> string text )
+    {
+        <b>this.X = x;</b>
+        this.Text = text;
+    }
+}
+</pre>
+
+<p>...and here's how the tests generally look, using the new constructor...</p>
+
+<pre class="code">
+[TestFixture]
+public class MagnetTests
+{
+    ...
+    [Test]
+    public void TwoMagnets()
+    {
+        <b>magnets.Add( new Magnet(10, "Hello") );
+        magnets.Add( new Magnet(20, "World") );</b>
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }
+    ...
+}
+</pre>
+
+<p>You'll notice that we aren't actually using the positions provided in
+   the constructor yet, but we've assigned them ascending numbers so that
+   the tests still pass - and they all do.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref4"><h2>Ordering the Magnets</h2></a>
+
+
+<p>It's now time to look again at the failing test that led us to refactor. As
+   modified to use our new magnet object, it looks like this...</p>
+
+<pre class="code">[TestFixture]
+public class MagnetTests
+{
+    ...
+
+    [Test]
+    public void TwoMagnetsInWrongOrder()
+    {
+        <b>magnets.Add( new Magnet(20, "World") );
+        magnets.Add( new Magnet(10, "Hello") );</b>
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }
+}</pre>
+
+<p>It still fails, but now we have enough info to make it pass. We'll
+   make one final change to our code that allows it to pass more easily.</p>
+   
+<p>Up to now, we've been building the text string as magnets are added. We could
+   continue to do that, but it seems simpler to just save the magnets somewhere
+   and sort them appropriately when we're asked for the text. We modify
+   <b>MagneticSurface</b> as follows...</p>
+   
+<pre class="code">
+public class MagnetSpace
+{
+    <b>private List&lt;Magnet&gt; magnets = new List&lt;Magnet&gt;();</b>
+
+    public string Text
+    {
+        get 
+        {
+            <b>magnets.Sort();
+            StringBuilder sb = new StringBuilder();
+
+            foreach(Magnet mag in magnets)
+            {
+                if ( sb.Length > 0 )
+                    sb.Append( ' ' );
+                sb.Append( mag.Text );
+            }
+
+            return sb.ToString();</b>
+        }
+    }
+
+    public void Add(Magnet magnet)
+    {
+        <b>magnets.Add(magnet);</b>
+    }
+}
+</pre>
+
+<p>Now both of the tests that use two magnets fail with an 
+   <b>InvalidOperationException</b>. In order to sort a List, the objects
+   contained in it need to implement the <b>IComparable</b> interface. In the
+   case of <b>Magnet</b>, that's easy enough...</p>
+   
+<pre class="code">
+public class Magnet <b>: IComparable</b>
+{
+    public int X;
+    public string Text;
+
+    public Magnet(int x, string text)
+    {
+        this.X = x;
+        this.Text = text;
+    }
+
+    <b>int IComparable.CompareTo(object other)
+    {
+        Magnet m = (Magnet)other;
+        return this.X.CompareTo(m.X);
+    }</b>
+}
+</pre>
+
+<p>We're taking advantage of some of the constraints we established in the
+   <a href="poetry_magnets_part1.html">first part</a> of the series. Since
+   magnets may not overlap, we can assume that a magnet with a greater X coordinate 
+   comes after one with a lesser coordinate. We're also assuming that the magnets
+   all lie in one line, a restriction we'll remove next.</p>
+      
+</div>
+
+<div class="section">
+
+<a name="ref5"><h2>Adding a Dimension</h2></a>
+
+
+<p>Here's the next test we want to make pass...</p>
+
+<pre class="code">
+[TestFixture]
+public class MagnetTests
+{
+    ...
+    <b>[Test]
+    public void TwoLinesOfMagnets()
+    {
+        magnets.Add( new Magnet( 10, 7, "Hello" ) );
+        magnets.Add( new Magnet( 20, 10, "I" ) );
+        magnets.Add( new Magnet( 25, 10, "Am" ) );
+        magnets.Add( new Magnet( 15, 10, "Here" ) );
+        magnets.Add( new Magnet( 20, 7, "World" ) );
+        Assert.AreEqual( "Hello World\nHere I Am", magnets.Text );
+    }</b>
+}
+</pre>
+
+<p>Notice that we've kept the Y coordinates for the magnets on each line the
+   same. This is in keeping with our constraint that magnets in a line match up
+   perfectly with one another - for now anyway. In order to make this compile, 
+   we again change the <b>Magnet</b> constructor...</p>
+   
+<pre class="code">
+public class Magnet : IComparable
+{
+    public int X;
+    <b>public int Y;</b>
+    public string Text;
+
+    public Magnet(int x, <b>int y,</b> string text)
+    {
+        this.X = x;
+        <b>this.Y = y;</b>
+        this.Text = text;
+    }
+    ...
+}
+</pre>
+
+<p>We modify all our other tests to pass in a constant Y coordinate to the
+   constructor and are able to compile. The latest test fails, since we are not
+   using the Y coordinate in our sort. On my system, the text becomes...</p>
+   
+   <pre class="code">"Hello Here World I Am"</pre>
+   
+<p>Let's try simply changing the code of the CompareTo() method...</p>
+
+<pre class="code">
+public class Magnet : IComparable
+{
+    ...
+    int IComparable.CompareTo(object other)
+    {
+        Magnet m = (Magnet)other;
+		
+		<b>int result = this.Y.CompareTo(m.Y);
+		if ( result != 0 )
+		    return result;</b>
+			
+        return this.X.CompareTo(m.X);
+    }
+}
+</pre>
+
+<p>This still fails, but we're closer. The text is now...</p>
+
+<pre class="code">"Hello World Here I Am"</pre>
+
+<p>...without the new line character. This is easy to fix in the code that 
+   actually creates the text string...</p>
+
+<pre class="code">
+public class MagnetSpace
+{
+    private List&lt;Magnet&gt; magnets = new List&lt;Magnet&gt;();
+
+    public string Text
+    {
+        get 
+        {
+            magnets.Sort();
+            StringBuilder sb = new StringBuilder();
+            <b>int lastY = 0;</b>
+
+            foreach(Magnet mag in magnets)
+            {
+                if ( sb.Length > 0 )
+                <b>{
+                    if ( lastY != mag.Y )
+                        sb.Append( '\n' );
+                    else
+                        sb.Append( ' ' );
+                }</b>
+                sb.Append( mag.Text );
+                <b>lastY = mag.Y;</b>
+            }
+
+            return sb.ToString();
+        }
+    }
+
+    public void Add(Magnet magnet)
+    {
+        magnets.Add(magnet);
+    }
+}
+</pre>
+
+<p>Once again, all our tests pass.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref6"><h2>So What Have We Accomplished?</h2></a>
+
+
+<p>Well, we've solved some of the basic aspects of the problem. We still haven't
+   dealt with lines of text that don't quite line up. And we still assume that all
+   magnets are perfectly horizontal.</p>
+   
+<p>In fact, the constraints we have not yet removed are exactly those that
+   I set initially in <a href="poetry_magnets_part1.html">part one</a>. 
+   In the next two parts this series, we'll finally relax each of them.</p>
+   
+<p>So far, we have changed our "design" at least four times.</p>
+
+<ol>
+   <li>We went from a string to a Magnet object.</li>
+   <li>We added an X coordinate to Magnet.</li>
+   <li>We went from building the text as magnets were added to keeping a list
+       of magnets and building the text when it was requested.</li>
+   <li>We added a Y coordinate to Magnet.</li>
+</ol>
+
+<p>We certainly could have planned some of this up front, but we suffered very
+   little slowdown by starting simply and refactoring as needed. More important,
+   we avoided building in "features" that we don't need.</p>
+   
+<p>Of course, you might say that we have only solved the easy parts up to now.
+   So let's see what happens when we deal with "jagged" lines of magnets in the 
+   next article of the series.</p>
+   
+</div>
+
+</div>
+<!-- End Content -->
+
+
+<!-- Standard CharliePoole.org footer -->
+<div id="footer">
+Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
+<big>c</big>harlie<big>p</big>oole at gmail dot com
+</div>
+
+</body>
+</html>

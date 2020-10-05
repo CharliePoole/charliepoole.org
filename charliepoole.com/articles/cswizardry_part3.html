@@ -1,0 +1,589 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<!-- Standard Head Part -->
+<head>
+<title>Charlie Poole - Cswizardry&nbsp;Part3</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script src="/js/common.js"></script>
+</head>
+<!-- End Standard Head Part -->
+
+<body>
+
+<!-- Standard header -->
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole</a></div>
+    <ul id="topnav">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/articles.html">Articles</a></li>
+        <li><a href="/events.html">Events</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <div id="menu-button" onclick="toggleMenuDisplay()">
+        <img src="/images/menu-button.png"/>
+    </div>
+</div>
+<!-- End of Header -->
+    
+<!-- Content -->
+<div id="content">
+
+<!-- Title Block -->
+<h1>C#Wizardry: Code Generation With Class<br>
+<span class="author">Charlie Poole</span><br>
+<span class="date">9/28/2002</span></h1> 
+
+ 
+
+
+   
+<div class="contents"><h3>
+    <div><a href="#ref1">Aren't We There Yet?</a></div>
+    <div><a href="#ref2">A New Form</a></div>
+    <div><a href="#ref3">Wizard Changes</a></div>
+    <div><a href="#ref4">Projects And Classes</a></div>
+    <div><a href="#ref6">Code Generation</a></div>
+    <div><a href="#ref7">Making It Run</a></div>
+    <div><a href="#ref8">What's It Good For</a></div>
+</div>
+
+<div class="section">
+
+<a name="ref1"><h2>Aren't We There Yet?</h2></a>
+
+<p>In the <a href="cswizardry_part1.html">first</a>
+   and <a href="cswizardry_part2.html">second</a>
+   articles of this series, we developed a wizard in C# that could actually
+   generate code and add it to our project! We took Windows Form-based input
+   from the user to tell how it was to be generated. But our original goal was
+   to do a bit more. We wanted to be able to generate a test fixture for a 
+   particular class in the project, with a test method for each public method
+   of the class.</p>
+
+<div class="floatright"><div class="figure">
+   <div class="floatnone"><img src="cswizardry_image5.gif" height=336 width=396></div>
+</div>Figure 1 - New Wizard Form</div>
+
+<p>Let's consider what we need to be able to do that. We'd like to get a list of
+   all the classes in a project and display them on a form, so that the user
+   can select one. In fact, since a Visual Studio solution may have more than one 
+   project, we'll need to get a list of projects as well. This will take
+   us beyond a single input form, so we'll need a mechanism to sequence through
+   the different forms both forward and - since it's expected of Wizards - backward.
+   Finally, when we generate the code, we'll have to look at all the methods in
+   a class and select the public methods for generating tests. We know that
+   other things may come up along the way, but this list of tasks is enough
+   to get us started.</p>
+   
+</div>
+
+<div class="section">
+
+<a name="ref2"><h2>A New Form</h2></a>
+
+
+<p>Let's start with the form. I decided to give the user the choice of 
+   generating a fixture for a specific class, one with a few sample tests
+   or an empty fixture. Figure 1 shows the form I designed for this purpose.</p>
+
+<p>The second form is the same Options form that we saw in the previous article, 
+   except now it's labeled as "Step 2 of 2."</p>
+   
+</div>
+
+<div class="section">
+
+<a name="ref3"><h2>Wizard Changes</h2></a>
+
+
+<p>Having two forms means the wizard class has to keep track of which one
+   should be displayed at any given moment. Figure 2 shows the changes in
+   this class from our earlier version.</p>
+   
+<p>The first thing you'll notice is that I changed the name of the class for
+   my final version to be CSharpAddTestFixtureWizard. It's also now saving
+   the value of the "application" parameter passed to Execute()
+   in a private variable of type DTE. DTE stands for Development Tools Extensiblility
+   and it's the top-most interface to the entire Visual Studio extension mechanism.
+   The wizard uses this to retrieve the Solution object, which is a new read-only
+   property it supports.</p>
+   
+<div class="floatnone"><div class="figure"><pre class="code">
+[ProgId("<b>CSharpAddTestFixtureWiz</b>")]
+public class <b>CSharpAddTestFixtureWiz</b> : IDTWizard
+{
+    <b>private DTE appDTE;</b>
+
+    private string wizardType;
+
+    ...
+
+    <b>public Solution Solution
+    {
+    get { return appDTE.Solution; }
+    }</b>
+
+    public void Execute ( object application , int hwndOwner , 
+           ref object[] contextParams , ref object[] customParams , 
+           ref EnvDTE.wizardResult retval )
+    {
+        <b>appDTE = (DTE) application;</b>
+        wizardType = (string) contextParams[0];
+			
+        ...
+		
+        <b>int step = 0;
+        Form[] form = { new TestFixtureTypeForm( this ), 
+                        new TestFixtureOptionsForm( this ) };
+
+        while ( step >=0 &amp;&amp; step < form.Length )
+        {
+            form[step].ShowDialog();
+
+            switch( result )
+            {
+                case wizardResult.wizardResultSuccess:
+                    ++step;
+                    break;
+                case wizardResult.wizardResultBackOut:
+                    --step;
+                    break;
+                case wizardResult.wizardResultCancel:
+                case wizardResult.wizardResultFailure:
+                default:
+                    retval = result;
+                    return;
+            }
+        }
+
+        if ( step > 0 )
+            result = generator.Generate();</b>
+
+        retval = result;
+    }
+}
+</pre></div>Figure 2 - Updated Wizard Code</div>
+
+<p>The wizard now has code to determine which of a number of forms is to be displayed
+   and to step forward and backward through those forms. To keep things as clean
+   as possible, both forms are created right at the start. If the logic got
+   more complicated than it currently is,
+   we might need a separate object to handle this. But for two forms, this code
+   seems to be the right level of specialization.</p>
+   
+</div>
+
+<div class="section">
+
+<a name="ref4"><h2>Projects And Classes</h2></a>
+
+
+<p>Our TestFixtureTypeForm - that's the name of our new form class - fills a 
+   combo box with a list of the projects in the current solution when it
+   loads for the first time. Figure 3 shows the methods that do the job.</p>
+
+<div class="floatnone"><div class="figure">
+<pre class="code"><b>private void AddProjectsToCombo()
+{
+    int targetProjectIndex = -1;
+    foreach ( Project project in wizard.Solution.Projects )
+    {
+        if ( HasTestableClasses( project ) )
+        {
+            int index = projectComboBox.Items.Add( project );
+            if ( project.Name == wizard.ProjectName )
+                targetProjectIndex = index;
+        }
+    }
+
+    if ( targetProjectIndex >= 0 )
+        projectComboBox.SelectedIndex = targetProjectIndex;
+    else if ( projectComboBox.Items.Count > 0 )
+        projectComboBox.SelectedIndex = 0;
+}
+
+private bool HasTestableClasses( Project project )
+{
+    try
+    {
+        return project.FileName != "" &amp;&amp;
+            HasTestableClasses( project.CodeModel.CodeElements );
+    }
+    catch
+    {
+        // Ignore projects that throw an exception due
+        // to language subsystem not being installed,
+        // or being an unmodeled project type.
+    }
+
+    return false;
+}
+</b></pre>
+</div>Figure 3 - Adding Projects to the ComboBox</div>
+
+<p>We loop through all the project objects in the current solution, checking each
+   of them to see if it has any classes for us to test. This eliminates things
+   like install projects, for example. The project object itself is added
+   to the combo box, which displays the name of the project by virtue of 
+   having its DisplayMember property set to Name. If the project into which 
+   we are adding the test fixture is placed on the list, we select it in the
+   combo box. Note however, that it won't be in the list if it's a new empty project.</p>
+
+<p>The HasTestableClasses method introduces a new concept.
+   A Visual Studio Project object may have a CodeModel, which is a representation 
+   of all the code elements in the project. Using the code model, it's possible to 
+   find an element by it's qualified name, determine the language of the
+   project and identify various subelements - as we are about to do. By the
+   way, in this demonstration program, we are making the assumption that
+   all the projects in a solution are written in C#. This is a pretty big
+   assumption, since Visual Studio supports multiple-language solutions and
+   a robust implementation of this wizard might need to deal with the 
+   possibility of other languages. For an explanation of some of the code
+   elements we will be using, see the sidebar.</p>
+   
+<div class="sidebar">
+  <a name="ref5"><h2>CodeModel Objects</h2></a>
+
+  <dl>
+	<dt>CodeModel</dt>
+	<dd>The object that represents all the code subelements in a project. Among
+	other things, it can tell you the language of the project, find elements
+	by name and add or remove elements.</dd>
+	<dt>CodeElements</dt>
+	<dd>The collection of individual elements in a CodeModel.</dd>
+	<dt>CodeElement</dt>
+	<dd>A generalized representation of an individual element in the code model.
+	It could be a class, a method, a namespace, etc. For many purposes, it's
+	more useful to cast the element as the appropriate derived class than to
+	work with it in its general form.</dd>
+	<dt>CodeNamespace</dt>
+	<dd>A CodeElement representing a namespace</dd>
+	<dt>CodeClass</dt>
+	<dd>A CodeElement representing a class</dd>
+  </dl>
+</div>
+
+<p>As we saw above, HasTestableClasses(Project) delegates its work to
+   an overloaded method which takes a collection of CodeElements. In fact,
+   the method has two additional overloads, both of which are shown in
+   Figure 4.</p> 
+
+<p>The overload that takes a collection of code elements simply looks
+   at each element to determine if it is a testable class or has one
+   contained in it. Note that the only element which can contain a
+   testable class is a namespace and that we check a namespace by looking
+   at its members. The type of CodeNamespace's Members property is
+   CodeElements, so this leads to another level of recursion.</p>
+
+<div class="floatnone"><div class="figure">
+<pre class="code"><b>private bool HasTestableClasses( CodeElements codeElements )
+{
+    foreach( CodeElement elem in codeElements )
+    {
+        if ( IsTestableClass( elem ) || HasTestableClasses( elem ) )
+            return true;
+    }
+
+    return false;
+}
+
+private bool HasTestableClasses( CodeElement elem )
+{
+    if ( !IsNamespace( elem ) )
+        return false;
+
+    CodeNamespace codeNamespace = (CodeNamespace) elem;
+    return HasTestableClasses( codeNamespace.Members );
+}
+
+private bool IsTestableClass( CodeElement elem )
+{
+    if ( !IsClass( elem) || !IsLocallyDefined( elem ) )
+        return false;
+
+    CodeClass codeClass = (CodeClass) elem;
+    if ( codeClass.Access != vsCMAccess.vsCMAccessPublic )
+        return false;
+
+    foreach( CodeAttribute attribute in codeClass.Attributes )
+        if ( attribute.Name == "TestFixture" )
+            return false;
+
+    return true;
+}
+
+private bool IsLocallyDefined( CodeElement elem )
+{
+    return elem.InfoLocation 
+        == vsCMInfoLocation.vsCMInfoLocationProject;
+}
+
+private bool IsClass( CodeElement elem )
+{
+    return elem.Kind == vsCMElement.vsCMElementClass;
+}
+
+private bool IsNamespace( CodeElement elem )
+{
+    return elem.Kind == vsCMElement.vsCMElementNamespace;
+}</b></pre>
+</div>Figure 4 - Checking for Testable Classes</div>
+
+<p>To determine whether an element is a testable class, we check
+   that it's a class and that it's locally defined. This is to
+   avoid looking at any of the framework classes or other classes
+   which are not defined in this project. We then convert the
+   generic CodeElement object to a CodeClass so we can see if
+   it has public access. Finally, we look at the attributes
+   on the class for "TestFixture" to ensure that we don't try to
+   test our test fixture classes.</p>
+   
+<p>Several small helper methods are used to encapsulate the checks
+   we must make on CodeElements. It's very common in programming
+   Visual Studio Wizards and Addins to have to make these checks
+   before attempting to cast an object to its proper type.</p>
+
+<p>We make extensive use of the same methods in adding testable classes to
+   the second combo box each time a project is selected. The AddClassesToCombo
+   method has two overloads which are shown in Figure 5. The first, taking a 
+   Project for its argument,
+   simply calls on the second, passing in the CodeElements collection from
+   that project's CodeModel.</p>
+
+<div class="floatnone"><div class="figure">
+<pre class="code"><b>private void AddClassesToCombo( Project project )
+{
+    classComboBox.Items.Clear();
+    classComboBox.Text = "";
+
+    if ( project != null )
+        AddClassesToCombo( project.CodeModel.CodeElements );
+
+    if ( classComboBox.Items.Count > 0 )
+    classComboBox.SelectedIndex = 0;
+}
+
+private void AddClassesToCombo( CodeElements codeElements )
+{
+    foreach( CodeElement elem in codeElements )
+    {
+        if ( IsTestableClass( elem ) )
+        {
+            CodeClass codeClass = (CodeClass) elem;
+            classComboBox.Items.Add( codeClass );
+            AddClassesToCombo( codeClass.Members );
+        }
+        else if( IsNamespace( elem ) )
+        {
+            CodeNamespace codeNamespace = (CodeNamespace)elem;
+            AddClassesToCombo( codeNamespace.Members );
+        }
+    }
+}</b></pre>
+</div>Figure 5 - Adding Classes to the Second ComboBox</div>
+
+<p>The overload that takes a CodeElements collection as its argument, examines
+   each element and adds it to the combo if it's a testable class. It
+   also looks at any nested classes to see if they should be added. If
+   the element being examined is a namespace, then the method is called
+   recursively on its members. As with the project combo, we insert the
+   class object itself, relying on the DisplayMember property to show
+   the name of the class for us.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref6"><h2>Code Generation</h2></a>
+
+
+<p>Our code generator gets a few new fields and properties in this version. We
+   use an enumeration to indicate which of the three types of code generation should
+   be performed, and store the current value in a private member. A property
+   exposes it to the outside world. Here's the enumeration:</p>
+
+<pre class="code"><b>public enum TestFixtureType
+{
+	ClassSpecificFixture,
+	SampleFixture,
+	EmptyFixture
+}</b></pre>
+
+<p>Our original GenerateCSharpFile method generated hard-coded sample tests.
+   In our new version, we use a switch statement to select one of three methods
+   to be called depending on the type of test fixture being generated.
+   InsertSampleTests() inserts the two sample methods we used in the previous 
+   version while InsertTestPlaceHolder() puts in a comment to indicate where the
+   user should add tests.</p>
+   
+<div class="floatnone"><div class="figure">
+<pre class="code"><b>GenerateCSharpFile()
+{
+    ...
+	
+    switch ( type )
+    {
+        case TestFixtureType.ClassSpecificFixture:
+            InsertClassSpecificTests();
+            break;
+        case TestFixtureType.SampleFixture:
+            InsertSampleTests();
+            break;
+        case TestFixtureType.EmptyFixture:
+        default:
+            InsertTestPlaceholder();
+        break;
+    }
+	
+    ....
+}
+
+void InsertSampleTests()
+{
+    InsertTestMethod( "SomeMethod" );
+    InsertTestMethod( "AnotherMethod" );
+}
+
+void InsertTestPlaceholder()
+{
+    if ( nMethods > 0 )
+        WriteLine();
+
+    WriteLine( "//" );
+    WriteLine( "// ToDo: Insert your tests here" );
+    WriteLine( "//" );
+}
+
+void InsertClassSpecificTests()
+{
+    Hashtable names = new Hashtable();
+
+    foreach( CodeElement elem in targetClass.Members )
+    {
+        if ( IsFunction( elem ) )
+        {
+            CodeFunction function = (CodeFunction) elem;
+            if ( function.Access == vsCMAccess.vsCMAccessPublic
+                 &amp;&amp; !names.ContainsKey( function.Name ) )
+            {
+			    switch( function.FunctionKind )
+                {
+                    case vsCMFunction.vsCMFunctionConstructor:
+                        InsertTestMethod( "Construction" );
+                        break;
+                    case vsCMFunction.vsCMFunctionFunction:
+                        InsertTestMethod( function.Name );
+                        break;
+                    default:
+                        break;
+                }
+
+                names.Add( function.Name, true );
+            }
+        }
+    }
+}
+
+private bool IsFunction( CodeElement elem )
+{
+    return elem.Kind == vsCMElement.vsCMElementFunction;
+}</b></pre>
+</div>Figure 6 - Generating Code</div>
+
+<p>To generate tests for a selected class, we retrieve the CodeClass object
+   from the combo box and examine all of it's members. The object
+   model uses some very general terminology in it's code model, so
+   the members we are interested in are of type CodeFunction. For
+   each such public member, we look at the kind of "function" it represents.
+   Most members are of the vsCMFunctionFunction type, and for them we
+   generate a test. We also generate a test for the constructor using the
+   name "Construction." A hashtable
+   is used to ensure that we only generate one test for a given name, avoiding
+   the need to worry about overloads.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref7"><h2>Making It Run</h2></a>
+
+
+<p>To make this version run, I created
+   a file called CSharpAddTestFixtureWiz.vsz and put it in my VC#\CSharpProjectItems
+   directory. It contains these two lines.
+
+   <pre class="code">
+   VSWIZARD 7.0
+   Wizard="CSharpAddTestFixtureWiz"
+   </pre>
+   In my Local Project Items directory I added a CSharpTestFixtureWiz.vsdir file,
+   containing the following line (as usual, broken for readability).
+   <pre class="code">
+   ..\CSharpAddTestFixtureWiz.vsz|0|Test Fixture|45|
+   A class for use as an NUnit TestFixture|
+   {FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}|4515|0|TestFixture.cs
+   </pre>
+   This gives me a "Test Fixture" item under Local Project Items when I use
+   the Add New Item dialog. As explained earlier you can make it appear in
+   various locations by creating additional .vsdir files.</p>
+
+</div>
+
+<div class="section">
+
+<a name="ref8"><h2>What's It Good For</h2></a>
+
+
+<p>I started this project with the notion that I wanted to do some sort
+   of wizard that involved non-trivial interaction with the Visual Studio
+   object model. That goal has been met quite well. I've learned a lot
+   about extending Visual Studio and the techniques described will apply
+   to other projects - like automatic refactoring of code.</p> 
+
+<p>But I also wanted to create a useful tool for generating test fixtures. 
+   So the question arises... 
+   <p class="comment">Is this a useful tool to have?</p>
+   </p>
+
+<p>I have to answer that question with a qualified "Yes." <i>If</i> 
+   you need to generate test cases for a number of classes that don't now 
+   have tests, then this tool can help. It still lacks a number of features
+   I'd like to see, like the ability to deal with multiple language solutions. 
+   But such features can always be added when they are needed, so I think this 
+   makes a good start toward a tool that could be used in real projects.</p>
+
+<p>The real question is "Under what circumstances is it useful to have 
+   such a tool?" To that, I must say "Only rarely." In most cases, you'll
+   be better served by writing one test at a time, before the 
+   corresponding application code is written. If you do that, you'll get 
+   along quite happily without this tool.</p>
+
+<p>However, for legacy projects, you might consider something like this as
+   a quick way of getting a large number of tests. In that case, I'd think
+   about modifying the test generation so that the initial tests are flagged
+   as non-runnable. This will give you a yellow bar and you'll have to
+   actually add some code to see any tests pass at all. Of course, if you
+   only want the illusion of tests, you can use it as is...</p>
+   
+<p>If you'd like to experiment with the wizard described here, the final source 
+   code can be downloaded <a href="/downloads/CSharpAddTestFixtureWiz.zip">here</a>.</p>
+
+</div>
+
+</div>
+<!-- End Content -->
+
+
+<!-- Standard CharliePoole.org footer -->
+<div id="footer">
+Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
+<big>c</big>harlie<big>p</big>oole at gmail dot com
+</div>
+
+</body>
+</html>

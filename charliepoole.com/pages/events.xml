@@ -1,0 +1,328 @@
+<?xml version="1.0" standalone="yes"?>
+
+<page>
+
+<sidebar float="right">
+<comment><b>If you attend one of these events... look me up!</b></comment>
+</sidebar>
+
+  
+<contents title="none"/>
+
+<section>
+
+<title>Coming Events</title>
+
+<event-list>
+  <event-entry href="http://www.agileday.it">
+      <title>XP2018</title>
+      <location>Porto, Portugal</location>
+      <date>May 21-25, 2018</date>
+      <precis >
+            I will be facilitating the Open Space at XP2018. This will be
+            the fifteenth XP Conference I've taken part in and I highly
+            recommend it for anyone who is serious about Agile in any of
+            it's forms, but especially XP.
+      </precis>
+  </event-entry>
+</event-list>
+
+</section>
+
+<section>
+
+<title>Recent Events</title>
+
+<event-list>
+  <event-entry href="http://www.agileday.it">
+      <title>Italian Agile Days</title>
+      <location>Urbino, Italy</location>
+      <date>November 17-18, 2017</date>
+      <precis >
+            Thanks to the Italian Agile community for the great welcome I received! 
+            It was my first time giving a keynote in Italian and although it was rough 
+            in places, folks were tolerant and really seemed to get the message about
+            getting "Back to Basics". This community seems very strong and are ready to 
+            revitalize their practice of Agile!
+      </precis>
+  </event-entry>
+</event-list>
+
+</section>
+
+<section>
+
+<title>Past Events</title>
+
+<event-list>
+  <event-entry href="http://www.xp-france.net/index.php?option=com_content&task=view&id=33&Itemid=100">
+        <title>XP Day France 2006</title>
+        <location>Paris, France</location>
+        <date>March 23-24, 2005</date>
+        <precis>
+            The well known XP-Day format in French! This is the first French XP-Day,
+			sponsored by the XP-France group. I'll be giving a keynote on XP
+			as a source of business value.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.xp2005.org">
+        <title>XP2006</title>
+		<location>Oulu, Finland</location>
+		<date>June 17-22, 2006</date>
+		<precis>
+				This year, I'm organizing the Open Space.
+		</precis>
+  </event-entry>
+  <event-entry>
+        <title>Consultants Network and Retreat</title>
+        <location>Newport, Oregon</location>
+        <date>October 24-28, 2005</date>
+        <precis>
+            An annual consultants retreat on the Oregon coast. I attended for
+		the first time time last year and I'm looking forward to this one as well.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.xp2005.org">
+        <title>XP2005</title>
+		<location>Sheffield University, UK</location>
+		<date>June 18-23, 2005</date>
+		<precis>
+				I presented a tutorial on
+				<link href="http://www.xp2005.org/tutorials#T04">Test Driven User Interfaces</link>.
+		</precis>
+  </event-entry>
+  <event-entry href="http://iancooper.brinkster.net/Pages/Default.aspx">
+        <title>London .NET Users Group</title>
+	<location>London</location>
+	<date>June 23, 2005</date>
+	<precis>
+		A talk about new NUnit features and Test-Driven Development in general.
+	</precis>
+  </event-entry>
+  <event-entry>
+        <title>Communicating Through Tests</title>
+		<location>Dublin, Ireland</location>
+		<date>June 28, 2005</date>
+		<precis>
+				This was part of an <link href="http://www.exoftware.com/workshops0605.htm">Agile Workshop</link>
+				that Mary Poppendieck and I presented.
+		</precis>
+  </event-entry>
+  <event-entry>
+        <title>Communicating Through Tests</title>
+		<location>London, UK</location>
+		<date>June 29, 2005</date>
+		<precis>
+				This was part of an <link href="http://www.exoftware.com/workshops0605.htm">Agile Workshop</link>
+				that Mary Poppendieck and I presented.
+		</precis>
+  </event-entry>
+  <event-entry href="http://agilescotland.blogspot.com">
+        <title>Agile Scotland SIG</title>
+	<location>Edinburgh</location>
+	<date>June 30, 2005</date>
+	<precis>
+		I spoke to a lively audience on the topic "When Tests Seem Hard" describing strategies for using
+		"hard to test" situations as opportunities to improve design.
+	</precis>
+  </event-entry>
+  <event-entry>
+        <title>Consultants Network and Retreat</title>
+        <location>Newport, Oregon</location>
+        <date>November 8-12, 2004</date>
+        <precis>
+                        Thanks to an invitation from Diana Larsen, I'm participating with
+                        this small group of consultants holding their annual retreat on the
+                        Oregon coast. I'm looking forward to meeting everyone!
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.ooopsla.org">
+        <title>OOPSLA 2004</title>
+        <location>Vancouver, Canada</location>
+        <date>October 24-28, 2004</date>
+        <precis>
+                        Participating in several workshops.
+        </precis>
+  </event-entry>
+  <event-entry>
+        <title>Scrum Gathering</title>
+        <location>Denver, Colorado</location>
+        <date>October 13-14</date>
+        <precis>
+                        Ken Schwaber is getting a group together for two days to talk
+                        about Scrum. I'm especially interested in how Scrum relates to
+                        the techniques and tools used by other agile methods.
+        </precis>
+  </event-entry>
+  <event-entry href="http://xpuniverse.com">
+        <title>XP Agile Universe 2004</title>
+        <location>Calgary, Canada</location>
+        <date>August 15-18, 2004</date>
+        <precis>
+                        I'm participating in two workshops:
+                        <link href="http://www.xpuniverse.com/schedule/W1">Who Should Write Acceptance Tests</link>
+                        and <link href="http://www.xpuniverse.com/schedule/W7">Refactoring Our Writings</link>.
+                        I'm also planning for an Open Space session on agile tools for .NET,
+                        to following up on a similar session I held at XP2004.
+                        Other than that, look for me around the conference, starting on
+                        Saturday afternoon. 
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.seattlexp.org">
+        <title>Seattle XP Users Group</title>
+        <location>Bellevue, Washington</location>
+        <date>August 12, 2004</date>
+        <precis>
+        </precis>
+  </event-entry>
+   <event-entry href="http://www.netda.net/Event/EventNewsletter.asp?EventDate=8/9/2004">
+        <title>.NET Developers Association</title>
+        <location>Redmond, Washington</location>
+        <date>August 9, 2004 (6:30pm)</date>
+        <precis>
+                        I'll be talking about unit/programmer testing, test-driven development
+                        and NUnit, featuring the new 2.2 release. This presentation is on
+                        the Microsoft campus: be sure to bring a printed copy of the 
+                        <link href="http://www.netda.net/Event/EventNewsletter.asp?EventDate=8/9/2004">
+                        meeting announcement</link> and a picture id in order to be admitted.
+        </precis>
+  </event-entry>
+  <event-entry href="http://xpseminarie.nu/sthlm406t">
+        <title>Communicating Through Tests</title>
+        <location>Stockholm, Sweden</location>
+        <date>June 16, 2004</date>
+        <precis>
+                This workshop, originally developed and presented jointly with Ward Cunningham,
+                is centered around the notion of tests as an agile communication medium. 
+                It features both unit and acceptance testing on multiple platforms. The
+                link is partly Swedish, partly English.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.spin-sweden.org/">
+        <title>SPIN-Sweden</title>
+        <location>Stockholm, Sweden</location>
+        <date>June 15, 2004</date>
+        <precis>
+                Two talks at the kickoff meeting for a new SPIN group: "Value, Competency 
+                and Cooperation in Software Development" and "Test-Driven Development".
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.xp2004.org">
+        <title>XP2004</title>
+        <location>Garmisch-Partenkirchen, Germany</location>
+        <date>June 6-10, 2004</date>
+        <precis>
+                Participating in several workshiops and chairing a paper session.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.ooopsla.org">
+        <title>OOPSLA 2003</title>
+        <location>Anaheim, California</location>
+        <date>October 26-30, 2003</date>
+        <precis>
+                Participating in several workshops... 
+        </precis>
+  </event-entry>
+  <event-entry href="http://xpuniverse.com">
+        <title>XP Agile Universe 2003</title>
+        <location>New Orleans, Louisiana</location>
+        <date>August 11-14, 2003</date>
+        <precis>
+                Participating in several workshops... 
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.complecon.se">
+        <title>Compelcon</title>
+        <location>Malmo, Sweden</location>
+        <date>June 5, 200</date>
+        <precis>
+                <link page="ctt">Communicating Through Tests</link> workshop presented
+                jointly with Ward Cunningham. The <link href="http://www.xpseminarie.nu/malmo06t">
+                registration page</link> is in Swedish, but the presentation will be in English..
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.xplabs.com">
+        <title>XpLabs</title>
+        <location>Sutri, Italy</location>
+        <date>June 3, 2003</date>
+        <precis>
+                <link page="ctt">Communicating Through Tests</link> workshop presented
+                jointly with Ward Cunningham. This one is in a very pleasant location
+                in the hills outside Rome.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.xp2003.org">
+        <title>XP2003</title>
+        <location>Genoa, Italy</location>
+        <date>May 25-29, 2003</date>
+        <precis>
+                At this year's conference, I'll be presenting my tutorial on 
+                <link href="http://www.xp2003.org/tutorial/poole.html">Advanced 
+                Unit-Testing Techniques in .Net</link> and participating in a 
+                <link href="http://www.xp2003.org/panels/fraser.html">panel discussion</link>
+                on Test-Driven Development. You may register 
+                <link href="http://www.xp2003.org/reg.html">here</link> for the tutorial.
+        </precis>
+  </event-entry>
+  <event-entry href="http://xpdx.org">
+        <title>Portland XP Users Group</title>
+        <location>Portland, Oregon</location>
+        <date>May 6, 2003</date>
+        <precis>
+                Presentation of new features in NUnit 2.1 followed by examples and discussion
+                of testing techniques applicable to .NET and the effect of testing on
+                application design.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.dotnetusers.org">
+        <title>DotNetUsers.org</title>
+        <location>Redmond, Washington</location>
+        <date>March 5, 2003</date>
+        <precis>
+                Presentation on <link href="http://www.dotnetusers.org/465.aspx">
+                NUnit, The Open-source Test Framework</link> and it's use in developing 
+                unit tests for the .Net environment.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.ssdotnet.org">
+        <title>South Sound .Net Users Group</title>
+        <location>Olympia, Washington</location>
+        <date>January 16, 2003</date>
+        <precis>
+                General introduction to the concepts of Extreme Programming. Slides are
+                available 
+                <link href="http://www.ssdotnet.org/Custom/Presentations/20030116_Poole/20030116_Poole_XP.ppt">
+                here</link>.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.ssdotnet.org">
+        <title>South Sound .Net Users Group</title>
+        <location>Olympia, Washington</location>
+        <date>December 19, 2002</date>
+        <precis>
+                Introduction to the use of NUnit for unit testing in the .Net
+                environment. Slides are available
+                <link href="http://www.ssdotnet.org/Custom/Presentations/20021219_Poole/20021219_Poole_NUnitTesting.ppt">
+                here</link>.
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.ooopsla.org">
+        <title>OOPSLA 2002</title>
+        <location>Seattle, Washington</location>
+        <date>November 4-8, 2002</date>
+        <precis>
+                Participated in Agile Processes Workshop focused on  
+        </precis>
+  </event-entry>
+  <event-entry href="http://www.xp2003.org/xp2002/">
+        <title>XP2002</title>
+        <location>Alghero, Sardinia, Ital</location>
+        <date>May 26-29, 2002</date>
+        <precis>
+        </precis>
+  </event-entry>
+</event-list>
+  
+</section>
+
+</page>

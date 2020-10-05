@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<!-- Standard Head Part -->
+<head>
+<title>Charlie Poole - Poetry&nbsp;Magnets&nbsp;Part3</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" type="text/css" href="/css/screen.css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script src="/js/common.js"></script>
+</head>
+<!-- End Standard Head Part -->
+
+<body>
+
+<!-- Standard header -->
+<div id="header">
+    <div id="logo"><a href="/"><big>C</big>harlie<big>P</big>oole</a></div>
+    <ul id="topnav">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/articles.html">Articles</a></li>
+        <li><a href="/events.html">Events</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <div id="menu-button" onclick="toggleMenuDisplay()">
+        <img src="/images/menu-button.png"/>
+    </div>
+</div>
+<!-- End of Header -->
+
+<!-- Content -->
+<div id="content">
+
+<!-- Title Block -->
+<h1>Poetry Magnets: Third Verse<br>
+<span class="author">Charlie Poole</span><br>
+<span class="date">December, 2005</span></h1>
+
+
+
+
+
+<div class="section">
+
+<a name="ref1"><h2>Jagged Lines</h2></a>
+
+
+<p>In the <a href="poetry_magnets_part1.html">first</a> and
+   <a href="poetry_magnets_part2.html">second</a> articles of this series,
+   we solved all the easiest parts of the problem. We can now display correct
+   text for single or multiple lines of text, subject to certain constraints...</p>
+   
+<ul>
+   <li>Magnets are always perfectly horizontal.</li>
+   <li>Magnets on the same line are always perfectly aligned.</li>
+</ul>
+
+<p>Neither of these are likely to be true - they certainly haven't been for
+   most refrigerator magnets I've seen!</p>
+   
+<p>In this article, we'll try to remove the second constraint. We'll allow the
+   magnets to be placed in jagged lines, so long as there is sufficient overlap
+   with other magnets so that a human reader would see them as a single line.
+   We don't know exactly what that means yet, but we'll figure it out as we 
+   write the tests.</p>
+   
+<p>In order to express the concept of "overlap" in the vertical dimension, the
+   magnets must have a height. Since we ordained at the start that all magnets 
+   are the same height, the size we pick is irrelevant. More precisely, it's a
+   matter of scaling. Since we started out using integers as positions, I'm 
+   picking 100 as the standard height of a magnet. That will allow me to think
+   about my tests as expressing some percentage of overlap, but it's only for 
+   my own convenience.</p>
+   
+<p>Here's a first test...</p>
+
+<pre class="code">[TestFixture]
+public class MagnetTests
+{
+    ...
+
+    <b>[Test]
+    public void TwoMagnetsWithVerticalOverlap()
+    {
+        magnets.Add( new Magnet( 1000, 700, "Hello" ) );
+        magnets.Add( new Magnet( 2000, 720, "World" ) );
+        Assert.AreEqual( "Hello World", magnets.Text );
+    }</b>
+}</pre>
+
+<p>I scaled up the X values to look right with the Y values, even though
+   this isn't strictly necessary - our code so far doesn't make any use of
+   them except for sorting. To keep the old tests valid, I multiplied all
+   the coordinates by 100 as well.</p>
+   
+<p>Running the test above, we're happy to see a red bar! We like our tests to
+   start out failing, so we can have the fun of making them pass. The error 
+   message is...</p>
+   
+<pre class="code">
+expected: "Hello World"
+ but was: "Hello\nWorld"
+</pre>
+
+</div>
+
+<div class="section">
+
+<a name="ref2"><h2>Unfinished Business</h2></a>
+
+
+<p>My first cut at making this test pass, was to revise the <b>CompareTo</b> 
+   method used in the sort. Here's one version...</p>
+   
+<pre class="code">
+public class Magnet : IComparable
+{
+    ...
+    int IComparable.CompareTo(object other)
+    {
+        Magnet m = (Magnet)other;
+		
+		<b>if ( Math.Abs( this.Y - m.Y ) &lt; 100 )
+		   return this.X.CompareTo(m.X);
+		   
+		return this.Y.CompareTo(m.Y);</b>
+    }
+}
+</pre>
+
+<p>I revised this several ways and finally tested the sort. It worked! But the
+   same error message - the one with an extra '\n' in the output - continued 
+   to appear. As with many such problems, the cause was obvious when I finally
+   saw it. It's these lines in the <b>MagneticSurface.Text</b> property...</p>
+   
+<pre class="code">
+    if ( lastY != mag.Y )
+        sb.Append( '\n' );
+    else
+        sb.Append( ' ' );
+</pre>
+
+<p>Even if two magnets are on the same line, we insert a <b>newline</b> if the
+   Y coordinates are different!</p>
+   
+<p>We can fix this, but it seems important to reflect on how it happened first.
+   The original code contains duplication, which I failed to notice and remove.
+   The concept of two magnets being on the same line is expressed in two different
+   ways in the code. Let's fix that...</p>
+   
+<pre class="code">
+public class Magnet : IComparable
+{
+    ...
+    int IComparable.CompareTo(object other)
+    {
+        Magnet m = (Magnet)other;
+		
+		<b>if ( this.InSameLineAs( m ) )</b>
+		   return this.X.CompareTo(m.X);
+		   
+		return this.Y.CompareTo(m.Y);
+    }
+	
+    <b>private bool InSameLineAs( Magnet other )
+    {
+        return Math.Abs( this.Y - m.Y ) &lt; 100 );
+    }</b>
+}
+</pre>
+
+
+</div>
+
+</div>
+<!-- End Content -->
+
+
+<!-- Standard CharliePoole.org footer -->
+<div id="footer">
+Copyright &copy; 2002-2017 Charlie Poole. All rights reserved<br>
+<big>c</big>harlie<big>p</big>oole at gmail dot com
+</div>
+
+</body>
+</html>
