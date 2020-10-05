@@ -234,9 +234,16 @@
     #content {
       margin: 0 10%;
     }
+<<<<<<< Updated upstream
     #three-columns .fixed-left-column {
       margin-top: 0; 
       width: 200px;
+=======
+    .left-column {
+      margin-top: 0;
+      float: left;
+      width: 133px;
+>>>>>>> Stashed changes
     }
     #three-columns .middle-and-right {
       margin-left: 200px;
